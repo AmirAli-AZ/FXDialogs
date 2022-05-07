@@ -3,9 +3,7 @@ package com.amirali.fxdialogs;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -17,11 +15,7 @@ import java.util.*;
 
 public final class TimePickerDialog extends Stage {
 
-    private final Builder builder;
-
     public TimePickerDialog(@NotNull Builder builder) {
-        this.builder = builder;
-
         var scene = new Scene(builder.container);
         if (builder.styles.isEmpty()) {
             scene.getStylesheets().add(
@@ -35,14 +29,6 @@ public final class TimePickerDialog extends Stage {
         setScene(scene);
     }
 
-    public Time getResult() {
-        return new Time(
-                builder.hours,
-                builder.minutes,
-                builder.toggleGroup.getSelectedToggle() == builder.amButton ? Time.AM_PM.AM : Time.AM_PM.PM
-        );
-    }
-
     public static class Builder {
 
         // UI components
@@ -53,8 +39,9 @@ public final class TimePickerDialog extends Stage {
 
         private int hours, minutes;
         private final List<String> styles = new ArrayList<>();
+        private boolean init = true;
 
-        public Builder() {
+        public Builder(@NotNull DialogInterface.OnTimeSetListener listener) {
             // init
 
             var vBox1 = new VBox(5);
@@ -128,13 +115,36 @@ public final class TimePickerDialog extends Stage {
             minutesLabel.setId("minutes");
             minutesLabel.setText(String.valueOf(minutes));
 
-            hoursArrowUp.setOnMouseClicked(mouseEvent -> hoursLabel.setText(String.valueOf(hours == 12 ? hours : ++hours)));
-            hoursArrowDown.setOnMouseClicked(mouseEvent -> hoursLabel.setText(String.valueOf(hours == 0 ? hours : --hours)));
-            minutesArrowUp.setOnMouseClicked(mouseEvent -> minutesLabel.setText(String.valueOf(minutes == 59 ? minutes : ++minutes)));
-            minutesArrowDown.setOnMouseClicked(mouseEvent -> minutesLabel.setText(String.valueOf(minutes == 0 ? minutes : --minutes)));
+            hoursArrowUp.setOnMouseClicked(mouseEvent -> {
+                hoursLabel.setText(String.valueOf(hours == 12 ? hours : ++hours));
+                listener.onTimeSet(getResult());
+            });
+
+            hoursArrowDown.setOnMouseClicked(mouseEvent -> {
+                hoursLabel.setText(String.valueOf(hours == 0 ? hours : --hours));
+                listener.onTimeSet(getResult());
+            });
+
+            minutesArrowUp.setOnMouseClicked(mouseEvent -> {
+                minutesLabel.setText(String.valueOf(minutes == 59 ? minutes : ++minutes));
+                listener.onTimeSet(getResult());
+            });
+
+            minutesArrowDown.setOnMouseClicked(mouseEvent -> {
+                minutesLabel.setText(String.valueOf(minutes == 0 ? minutes : --minutes));
+                listener.onTimeSet(getResult());
+            });
+
+            toggleGroup.selectedToggleProperty().addListener((observableValue, oldToggle, newToggle) -> {
+                if (!init)
+                    listener.onTimeSet(getResult());
+            });
+
+            init = false;
         }
 
         public Builder initTime(Time time) {
+            init = true;
             hours = time.hours();
             minutes = time.minutes();
 
@@ -142,6 +152,7 @@ public final class TimePickerDialog extends Stage {
             minutesLabel.setText(String.valueOf(minutes));
 
             toggleGroup.selectToggle(time.am_pm() == Time.AM_PM.AM ? amButton : pmButton);
+            init = false;
 
             return this;
         }
@@ -155,6 +166,14 @@ public final class TimePickerDialog extends Stage {
         private void setWidthAndHeight(ImageView imageView) {
             imageView.setFitWidth(40);
             imageView.setFitHeight(40);
+        }
+
+        private Time getResult() {
+            return new Time(
+                    hours,
+                    minutes,
+                    toggleGroup.getSelectedToggle() == amButton ? Time.AM_PM.AM : Time.AM_PM.PM
+            );
         }
 
         public TimePickerDialog create() {
