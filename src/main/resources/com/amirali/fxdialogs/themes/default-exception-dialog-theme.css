@@ -1,0 +1,13 @@
+.root {
+    -fx-background-color : white;
+}
+
+#message {
+    -fx-font-size : 18px;
+}
+
+#error-details {
+    -fx-focus-color : transparent;
+    -fx-faint-focus-color : transparent;
+    -fx-background-color : white;
+}

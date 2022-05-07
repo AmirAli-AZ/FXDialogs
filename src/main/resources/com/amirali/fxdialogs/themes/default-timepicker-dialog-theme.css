@@ -1,0 +1,16 @@
+.root {
+    -fx-background-color : white;
+}
+
+#colon {
+    -fx-font-size : 20px;
+    -fx-font-weight : bold;
+}
+
+#hours {
+    -fx-font-size : 16px;
+}
+
+#minutes {
+    -fx-font-size : 16px;
+}
