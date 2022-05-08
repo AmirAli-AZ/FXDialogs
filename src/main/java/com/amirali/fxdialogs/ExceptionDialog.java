@@ -9,6 +9,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;
@@ -20,7 +21,13 @@ import java.util.Objects;
 
 public final class ExceptionDialog extends Dialog<ButtonType> {
 
-    public ExceptionDialog(Builder builder) {
+    public ExceptionDialog(@NotNull Builder builder) {
+        setupDialog(builder);
+    }
+
+    private void setupDialog(@NotNull Builder builder) {
+        setTitle("Exception");
+
         var pane = getDialogPane();
 
         pane.setHeader(builder.defaultHeader);
@@ -62,6 +69,8 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
             errorIcon.setFitHeight(40);
             errorDetails.setEditable(false);
             defaultLabelMessage.setWrapText(true);
+            HBox.setHgrow(defaultLabelMessage, Priority.ALWAYS);
+            defaultLabelMessage.setMaxWidth(Double.MAX_VALUE);
             defaultHeader.setAlignment(Pos.CENTER_LEFT);
             defaultHeader.getChildren().addAll(errorIcon, defaultLabelMessage);
         }

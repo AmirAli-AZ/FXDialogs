@@ -83,7 +83,10 @@ public final class AlertDialog extends Stage {
 
             message.setId("message");
             message.setWrapText(true);
+            message.setMaxWidth(Double.MAX_VALUE);
             title.setId("title");
+            title.setWrapText(true);
+            title.setMaxWidth(Double.MAX_VALUE);
             positiveButton.setId("positive-button");
             positiveButton.setDefaultButton(true);
             negativeButton.setId("negative-button");

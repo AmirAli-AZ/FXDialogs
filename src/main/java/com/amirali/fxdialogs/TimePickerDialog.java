@@ -16,6 +16,10 @@ import java.util.*;
 public final class TimePickerDialog extends Stage {
 
     public TimePickerDialog(@NotNull Builder builder) {
+        setupDialog(builder);
+    }
+
+    private void setupDialog(@NotNull Builder builder) {
         var scene = new Scene(builder.container);
         if (builder.styles.isEmpty()) {
             scene.getStylesheets().add(
