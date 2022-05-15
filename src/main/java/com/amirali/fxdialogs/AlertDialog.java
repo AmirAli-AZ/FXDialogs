@@ -15,11 +15,14 @@ import java.util.*;
 
 public final class AlertDialog extends Stage {
 
+    private final Builder builder;
+
     public AlertDialog(@NotNull Builder builder) {
-        setupDialog(builder);
+        this.builder = builder;
+        setupDialog();
     }
 
-    private void setupDialog(@NotNull Builder builder) {
+    private void setupDialog() {
         var scene = new Scene(builder.container);
         if (builder.styles.isEmpty()) {
             scene.getStylesheets().add(

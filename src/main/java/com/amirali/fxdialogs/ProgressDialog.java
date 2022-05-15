@@ -24,10 +24,10 @@ public final class ProgressDialog extends Stage {
 
     public ProgressDialog(@NotNull Builder builder) {
         this.builder = builder;
-        setupDialog(builder);
+        setupDialog();
     }
 
-    private void setupDialog(@NotNull Builder builder) {
+    private void setupDialog() {
         if (builder.isTitleAdded)
             setTitle(builder.title.getText());
         var scene = new Scene(builder.container);

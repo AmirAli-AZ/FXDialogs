@@ -21,11 +21,14 @@ import java.util.Objects;
 
 public final class ExceptionDialog extends Dialog<ButtonType> {
 
+    private final Builder builder;
+
     public ExceptionDialog(@NotNull Builder builder) {
-        setupDialog(builder);
+        this.builder = builder;
+        setupDialog();
     }
 
-    private void setupDialog(@NotNull Builder builder) {
+    private void setupDialog() {
         setTitle("Exception");
 
         var pane = getDialogPane();

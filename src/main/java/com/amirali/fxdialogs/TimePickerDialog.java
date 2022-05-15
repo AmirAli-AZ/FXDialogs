@@ -19,10 +19,10 @@ public final class TimePickerDialog extends Stage {
 
     public TimePickerDialog(@NotNull Builder builder) {
         this.builder = builder;
-        setupDialog(builder);
+        setupDialog();
     }
 
-    private void setupDialog(@NotNull Builder builder) {
+    private void setupDialog() {
         var scene = new Scene(builder.container);
         if (builder.styles.isEmpty()) {
             scene.getStylesheets().add(
