@@ -11,10 +11,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public final class AlertDialog extends Stage {
 
@@ -222,10 +219,12 @@ public final class AlertDialog extends Stage {
                 checkBoxesContainer.getChildren().clear();
             for (int i = 0; i < items.length; i++) {
                 var checkBox = new CheckBox(items[i]);
-                checkBox.setSelected(selectedIndexes.length > i && i == selectedIndexes[i]);
+                for (int j : selectedIndexes) {
+                    if (i == j)
+                        checkBox.setSelected(true);
+                }
                 int finalI = i;
                 checkBox.selectedProperty().addListener((observableValue, oldValue, newValue) -> listener.onItemSelected(finalI, newValue));
-
                 checkBoxesContainer.getChildren().add(checkBox);
             }
             if (!isCheckBoxesContainerAdded) {
