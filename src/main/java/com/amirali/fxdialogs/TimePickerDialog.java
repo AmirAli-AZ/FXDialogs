@@ -15,7 +15,10 @@ import java.util.*;
 
 public final class TimePickerDialog extends Stage {
 
+    private final Builder builder;
+
     public TimePickerDialog(@NotNull Builder builder) {
+        this.builder = builder;
         setupDialog(builder);
     }
 
@@ -31,6 +34,18 @@ public final class TimePickerDialog extends Stage {
             scene.getStylesheets().addAll(builder.styles);
         }
         setScene(scene);
+    }
+
+    public void initTime(Time time) {
+        builder.init = true;
+        builder.hours = time.hours();
+        builder.minutes = time.minutes();
+
+        builder.hoursLabel.setText(String.valueOf(builder.hours));
+        builder.minutesLabel.setText(String.valueOf(builder.minutes));
+
+        builder.toggleGroup.selectToggle(time.am_pm() == Time.AM_PM.AM ? builder.amButton : builder.pmButton);
+        builder.init = false;
     }
 
     public static class Builder {
