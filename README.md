@@ -4,6 +4,8 @@ This is a library to create AlertDialog , ProgressDialog and etc...
 
 ### Examples
 
+> Click ▶️ or 🔽 to expand or collapse examples
+
 <details>
 <summary>AlertDialog</summary>
 
