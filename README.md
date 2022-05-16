@@ -151,6 +151,45 @@ try {
 <img src="images/exception-dialog-demo.png" alt="ExceptionDialog">
 </details>
 
+<details>
+<summary>PersistentBottomSheet</summary>
+
+```java
+var root = new BorderPane();
+
+        var persistentBottomSheet = new PersistentBottomSheet();
+        persistentBottomSheet.setMinHeight(150);
+        persistentBottomSheet.setStyle("-fx-background-color : orange;");
+        persistentBottomSheet.dragHandlerImageProperty().set(new Image(Objects.requireNonNull(getClass().getResourceAsStream("icons/round_horizontal_rule_white_24dp.png"))));
+        persistentBottomSheet.setDuration(Duration.seconds(.5));
+        persistentBottomSheet.addSupportResizing();
+
+        var label = new Label("Bottom Sheet");
+        label.setStyle("-fx-text-fill : white; -fx-font-size : 18px;");
+        var bottomSheetContentRoot = new StackPane(label);
+        bottomSheetContentRoot.setPadding(new Insets(15));
+
+        persistentBottomSheet.getChildren().add(bottomSheetContentRoot);
+
+        var showButton = new Button("Show");
+        showButton.setPrefSize(75, 25);
+        showButton.setOnAction(event -> {
+            persistentBottomSheet.showingProperty().set(!persistentBottomSheet.isShowing());
+            if (persistentBottomSheet.isShowing())
+                showButton.setText("Hide");
+            else
+                showButton.setText("Show");
+        });
+
+        root.setCenter(new StackPane(showButton));
+        root.setBottom(persistentBottomSheet);
+```
+
+<img src="images/persistent-bottom-sheet-demo-1.png" alt="PersistentBottomSheetDemo">
+<img src="images/persistent-bottom-sheet-demo-2.png" alt="PersistentBottomSheetDemo">
+
+</details>
+
 
 ### Styling
 
