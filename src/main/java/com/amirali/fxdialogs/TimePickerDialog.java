@@ -1,5 +1,7 @@
 package com.amirali.fxdialogs;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,6 +18,16 @@ import java.util.*;
 public final class TimePickerDialog extends Stage {
 
     private final Builder builder;
+    private final ObjectProperty<Image> arrowUpImageProperty = new SimpleObjectProperty<>(
+            new Image(
+                    Objects.requireNonNull(getClass().getResourceAsStream("icons/round_keyboard_arrow_up_black_24dp.png"))
+            )
+    );
+    private final ObjectProperty<Image> arrowDownImageProperty = new SimpleObjectProperty<>(
+            new Image(
+                    Objects.requireNonNull(getClass().getResourceAsStream("icons/round_keyboard_arrow_down_black_24dp.png"))
+            )
+    );
 
     public TimePickerDialog(@NotNull Builder builder) {
         this.builder = builder;
@@ -23,6 +35,9 @@ public final class TimePickerDialog extends Stage {
     }
 
     private void setupDialog() {
+        builder.bindArrowUpImageProperty(arrowUpImageProperty);
+        builder.bindArrowDownImageProperty(arrowDownImageProperty);
+
         var scene = new Scene(builder.container);
         if (builder.styles.isEmpty()) {
             scene.getStylesheets().add(
@@ -48,6 +63,14 @@ public final class TimePickerDialog extends Stage {
         builder.init = false;
     }
 
+    public ObjectProperty<Image> arrowUpImageProperty() {
+        return arrowUpImageProperty;
+    }
+
+    public ObjectProperty<Image> arrowDownImageProperty() {
+        return arrowDownImageProperty;
+    }
+
     public static class Builder {
 
         // UI components
@@ -55,6 +78,10 @@ public final class TimePickerDialog extends Stage {
         private final Label hoursLabel = new Label("0"), minutesLabel = new Label("0");
         private final ToggleButton amButton = new ToggleButton("AM"), pmButton = new ToggleButton("PM");
         private final ToggleGroup toggleGroup = new ToggleGroup();
+        private final ImageView hoursArrowUp = new ImageView(),
+                hoursArrowDown = new ImageView(),
+                minutesArrowUp = new ImageView(),
+                minutesArrowDown = new ImageView();
 
         private int hours, minutes;
         private final List<String> styles = new ArrayList<>();
@@ -73,27 +100,6 @@ public final class TimePickerDialog extends Stage {
             vBox1.setAlignment(Pos.CENTER);
             vBox2.setAlignment(Pos.CENTER);
             vBox3.setAlignment(Pos.CENTER);
-
-            var hoursArrowUp = new ImageView(
-                    new Image(
-                            Objects.requireNonNull(getClass().getResourceAsStream("icons/round_keyboard_arrow_up_black_24dp.png"))
-                    )
-            );
-            var hoursArrowDown = new ImageView(
-                    new Image(
-                            Objects.requireNonNull(getClass().getResourceAsStream("icons/round_keyboard_arrow_down_black_24dp.png"))
-                    )
-            );
-            var minutesArrowUp = new ImageView(
-                    new Image(
-                            Objects.requireNonNull(getClass().getResourceAsStream("icons/round_keyboard_arrow_up_black_24dp.png"))
-                    )
-            );
-            var minutesArrowDown = new ImageView(
-                    new Image(
-                            Objects.requireNonNull(getClass().getResourceAsStream("icons/round_keyboard_arrow_down_black_24dp.png"))
-                    )
-            );
 
             hoursArrowUp.setId("hours-arrow-up");
             hoursArrowDown.setId("hours-arrow-down");
@@ -193,6 +199,16 @@ public final class TimePickerDialog extends Stage {
                     minutes,
                     toggleGroup.getSelectedToggle() == amButton ? Time.AM_PM.AM : Time.AM_PM.PM
             );
+        }
+
+        private void bindArrowUpImageProperty(ObjectProperty<Image> imageProperty) {
+            hoursArrowUp.imageProperty().bind(imageProperty);
+            minutesArrowUp.imageProperty().bind(imageProperty);
+        }
+
+        private void bindArrowDownImageProperty(ObjectProperty<Image> imageProperty) {
+            hoursArrowDown.imageProperty().bind(imageProperty);
+            minutesArrowDown.imageProperty().bind(imageProperty);
         }
 
         public TimePickerDialog create() {

@@ -1,5 +1,7 @@
 package com.amirali.fxdialogs;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
@@ -22,6 +24,11 @@ import java.util.Objects;
 public final class ExceptionDialog extends Dialog<ButtonType> {
 
     private final Builder builder;
+    private final ObjectProperty<Image> errorIconImageProperty = new SimpleObjectProperty<>(
+            new Image(
+                    Objects.requireNonNull(getClass().getResourceAsStream("icons/ic_error_64.png"))
+            )
+    );
 
     public ExceptionDialog(@NotNull Builder builder) {
         this.builder = builder;
@@ -40,6 +47,7 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
             pane.getButtonTypes().add(ButtonType.CLOSE);
         else
             pane.getButtonTypes().addAll(builder.buttonTypes);
+        builder.errorIcon.imageProperty().bind(errorIconImageProperty);
 
         var scene = (Scene) pane.getScene();
         if (builder.styles.isEmpty())
@@ -48,16 +56,16 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
             scene.getStylesheets().addAll(builder.styles);
     }
 
+    public ObjectProperty<Image> errorIconImageProperty() {
+        return errorIconImageProperty;
+    }
+
     public static class Builder {
 
         // UI components
         private final HBox defaultHeader = new HBox();
         private final Label defaultLabelMessage = new Label();
-        private final ImageView errorIcon = new ImageView(
-                new Image(
-                        Objects.requireNonNull(getClass().getResourceAsStream("icons/ic_error_64.png"))
-                )
-        );
+        private final ImageView errorIcon = new ImageView();
         private final TextArea errorDetails = new TextArea();
 
         private final List<ButtonType> buttonTypes = new ArrayList<>();
