@@ -25,6 +25,7 @@ public class PersistentBottomSheet extends VBox {
     private boolean performingShowHide;
     private boolean firstMouseDrag;
     private double originalHeight;
+    private Duration duration = Duration.seconds(1);
 
     public PersistentBottomSheet() {
         showingProperty.addListener((observableValue, oldValue, newValue) -> {
@@ -53,7 +54,7 @@ public class PersistentBottomSheet extends VBox {
     }
 
     public void hide() {
-        hide(Duration.seconds(1));
+        hide(duration);
     }
 
     public void show(Duration duration) {
@@ -69,7 +70,7 @@ public class PersistentBottomSheet extends VBox {
     }
 
     public void show() {
-        show(Duration.seconds(1));
+        show(duration);
     }
 
     public boolean isShowing() {
@@ -85,6 +86,9 @@ public class PersistentBottomSheet extends VBox {
     }
 
     public void addSupportResizing() {
+        // DO NOT change min height
+        setMinHeight(USE_PREF_SIZE);
+
         var dragArea = new StackPane();
         var dragHandler = new ImageView();
 
@@ -114,5 +118,13 @@ public class PersistentBottomSheet extends VBox {
 
     public ObjectProperty<Image> dragHandlerImageProperty() {
         return dragHandlerImageProperty;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public Duration getDuration() {
+        return duration;
     }
 }
