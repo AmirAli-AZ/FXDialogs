@@ -16,7 +16,15 @@ public enum Sounds {
     Pristine("pristine-609.mp3"),
     SoProud("so-proud-notification.mp3"),
     SystemFault("system-fault-518.mp3"),
-    Upset("upset-sound-tone.mp3");
+    Upset("upset-sound-tone.mp3"),
+    Deduction("deduction-588.mp3"),
+    DoneForYou("done-for-you-612.mp3"),
+    FingerLicking("fingerlicking-message-tone.mp3"),
+    Goes("goes-without-saying-608.mp3"),
+    IllMakeItPossible("ill-make-it-possible-notification.mp3"),
+    PointBlank("point-blank-589.mp3"),
+    Succeeded("succeeded-message-tone.mp3"),
+    When("when-604.mp3");
 
     private final String path;
 
