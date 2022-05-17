@@ -27,6 +27,14 @@ public class PersistentBottomSheet extends VBox {
     private boolean firstMouseDrag;
     private double originalHeight;
     private Duration duration = Duration.seconds(1);
+    private BottomSheetCallBack callBack;
+
+    // states
+    public static final int COLLAPSED = 604;
+    public static final int EXPANDED = 688;
+    public static final int DRAGGED = 85;
+    public static final int HIDDEN = 744;
+    public static final int SHOWN = 451;
 
     public PersistentBottomSheet() {
         showingProperty.addListener((observableValue, oldValue, newValue) -> {
@@ -48,6 +56,9 @@ public class PersistentBottomSheet extends VBox {
         transition.setToY(getHeight());
         transition.setOnFinished(event -> {
             showingProperty.set(false);
+            if (callBack != null)
+                callBack.onState(this, HIDDEN);
+
             performingShowHide = false;
         });
         transition.play();
@@ -64,6 +75,9 @@ public class PersistentBottomSheet extends VBox {
         transition.setToY(0);
         transition.setOnFinished(event -> {
             showingProperty.set(true);
+            if (callBack != null)
+                callBack.onState(this, SHOWN);
+
             performingShowHide = false;
         });
         transition.play();
@@ -108,8 +122,23 @@ public class PersistentBottomSheet extends VBox {
 
                 var newHeight = getHeight() - mouseEvent.getY();
 
-                if (newHeight >= dragArea.getHeight() && newHeight < originalHeight)
+                if (newHeight >= dragArea.getHeight() && newHeight <= originalHeight) {
                     setPrefHeight(newHeight);
+
+                    if (callBack != null) {
+                        // return state
+                        callBack.onState(this, DRAGGED);
+
+                        if (newHeight == originalHeight)
+                            callBack.onState(this, EXPANDED);
+                        if (newHeight == dragArea.getHeight())
+                            callBack.onState(this, COLLAPSED);
+
+                        // return slide percent
+
+                        callBack.onSlide(this, (int) ((newHeight - dragArea.getHeight()) / (originalHeight - dragArea.getHeight()) * 100));
+                    }
+                }
             }
         });
 
@@ -127,5 +156,13 @@ public class PersistentBottomSheet extends VBox {
 
     public Duration getDuration() {
         return duration;
+    }
+
+    public void setCallBack(BottomSheetCallBack callBack) {
+        this.callBack = callBack;
+    }
+
+    public BottomSheetCallBack getCallBack() {
+        return callBack;
     }
 }
