@@ -2,6 +2,8 @@ package com.amirali.fxdialogs;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
@@ -24,11 +26,6 @@ import java.util.Objects;
 public final class ExceptionDialog extends Dialog<ButtonType> {
 
     private final Builder builder;
-    private final ObjectProperty<Image> errorIconImageProperty = new SimpleObjectProperty<>(
-            new Image(
-                    Objects.requireNonNull(getClass().getResourceAsStream("icons/ic_error_64.png"))
-            )
-    );
 
     public ExceptionDialog(@NotNull Builder builder) {
         this.builder = builder;
@@ -36,8 +33,6 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
     }
 
     private void setupDialog() {
-        setTitle("Exception");
-
         var pane = getDialogPane();
 
         pane.setHeader(builder.defaultHeader);
@@ -47,7 +42,6 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
             pane.getButtonTypes().add(ButtonType.CLOSE);
         else
             pane.getButtonTypes().addAll(builder.buttonTypes);
-        builder.errorIcon.imageProperty().bind(errorIconImageProperty);
 
         var scene = (Scene) pane.getScene();
         if (builder.styles.isEmpty())
@@ -57,55 +51,88 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
     }
 
     public ObjectProperty<Image> errorIconImageProperty() {
-        return errorIconImageProperty;
+        return builder.errorIconImageProperty;
     }
+
+    public void setDialogMessage(@NotNull String message) {
+        builder.dialogMessageProperty.set(message);
+    }
+
+    public String getDialogMessage() {
+        return builder.dialogMessageProperty.get();
+    }
+
+    public StringProperty dialogMessageProperty() {
+        return builder.dialogMessageProperty;
+    }
+
+    public void setException(@NotNull Throwable exception) {
+        builder.exceptionProperty.set(exception);
+    }
+
+    public Throwable getException() {
+        return builder.exceptionProperty.get();
+    }
+
+    public ObjectProperty<Throwable> exceptionProperty() {
+        return builder.exceptionProperty;
+    }
+
 
     public static class Builder {
 
         // UI components
         private final HBox defaultHeader = new HBox();
-        private final Label defaultLabelMessage = new Label();
-        private final ImageView errorIcon = new ImageView();
         private final TextArea errorDetails = new TextArea();
 
         private final List<ButtonType> buttonTypes = new ArrayList<>();
         private final List<String> styles = new ArrayList<>();
+        private final ObjectProperty<Image> errorIconImageProperty = new SimpleObjectProperty<>(
+                new Image(
+                        Objects.requireNonNull(getClass().getResourceAsStream("icons/ic_error_64.png"))
+                )
+        );
+        private final ObjectProperty<Throwable> exceptionProperty = new SimpleObjectProperty<>();
+        private final StringProperty dialogMessageProperty = new SimpleStringProperty();
 
         public Builder() {
+            ImageView errorIcon = new ImageView();
             errorIcon.setId("error-icon");
-            defaultLabelMessage.setId("message");
-            errorDetails.setId("error-details");
-
             errorIcon.setFitWidth(40);
             errorIcon.setFitHeight(40);
-            errorDetails.setEditable(false);
+            errorIcon.imageProperty().bind(errorIconImageProperty);
+
+            Label defaultLabelMessage = new Label();
+            defaultLabelMessage.setId("message");
             defaultLabelMessage.setWrapText(true);
             HBox.setHgrow(defaultLabelMessage, Priority.ALWAYS);
             defaultLabelMessage.setMaxWidth(Double.MAX_VALUE);
+            defaultLabelMessage.textProperty().bind(dialogMessageProperty);
+
+            errorDetails.setId("error-details");
+            errorDetails.setEditable(false);
+
             defaultHeader.setAlignment(Pos.CENTER_LEFT);
             defaultHeader.getChildren().addAll(errorIcon, defaultLabelMessage);
+
+            exceptionProperty.addListener((observableValue, oldValue, newValue) -> {
+                var sw = new StringWriter();
+                var pw = new PrintWriter(sw);
+
+                newValue.printStackTrace(pw);
+
+                errorDetails.setText(sw.toString());
+            });
         }
 
-        public Builder setMessage(@NotNull String message) {
-            defaultLabelMessage.setText(message);
+        public Builder setDialogMessage(@NotNull String message) {
+            dialogMessageProperty.set(message);
 
             return this;
         }
 
         public Builder setException(@NotNull Throwable exception) {
-            var sw = new StringWriter();
-            var pw = new PrintWriter(sw);
-
-            exception.printStackTrace(pw);
-
-            errorDetails.setText(sw.toString());
-
-            return this;
-        }
-
-
-        public Builder setErrorIcon(@NotNull Image image) {
-            errorIcon.setImage(image);
+            exceptionProperty.set(exception);
 
             return this;
         }
@@ -116,7 +143,7 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
             return this;
         }
 
-        public Builder setStyles(String... styles) {
+        public Builder setStyles(@NotNull String... styles) {
             Collections.addAll(this.styles, styles);
 
             return this;

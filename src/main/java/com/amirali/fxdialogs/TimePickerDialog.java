@@ -71,6 +71,19 @@ public final class TimePickerDialog extends Stage {
         return arrowDownImageProperty;
     }
 
+    public void setTime(@NotNull Time time) {
+        builder.timeProperty.set(time);
+    }
+
+    public Time getTime() {
+        return builder.timeProperty.get();
+    }
+
+
+    public ObjectProperty<Time> timeProperty() {
+        return builder.timeProperty;
+    }
+
     public static class Builder {
 
         // UI components
@@ -86,8 +99,9 @@ public final class TimePickerDialog extends Stage {
         private int hours, minutes;
         private final List<String> styles = new ArrayList<>();
         private boolean init = true;
+        private final ObjectProperty<Time> timeProperty = new SimpleObjectProperty<>();
 
-        public Builder(@NotNull DialogInterface.OnTimeSetListener listener) {
+        public Builder() {
             // init
 
             var vBox1 = new VBox(5);
@@ -130,11 +144,12 @@ public final class TimePickerDialog extends Stage {
             colon.setId("colon");
             container.getChildren().addAll(vBox1, colon, vBox2, vBox3);
 
-            var am_pm = Calendar.getInstance().get(Calendar.AM_PM);
-            toggleGroup.selectToggle(am_pm == Calendar.AM ? amButton : pmButton);
+            var currentTime = Time.getCurrentTime();
+            timeProperty.set(currentTime);
 
-            hours = Calendar.getInstance().get(Calendar.HOUR);
-            minutes = Calendar.getInstance().get(Calendar.MINUTE);
+            toggleGroup.selectToggle(currentTime.am_pm() == Time.AM_PM.AM ? amButton : pmButton);
+            hours = currentTime.hours();
+            minutes = currentTime.minutes();
             hoursLabel.setId("hours");
             hoursLabel.setText(String.valueOf(hours));
             minutesLabel.setId("minutes");
@@ -142,42 +157,46 @@ public final class TimePickerDialog extends Stage {
 
             hoursArrowUp.setOnMouseClicked(mouseEvent -> {
                 hoursLabel.setText(String.valueOf(hours == 12 ? hours : ++hours));
-                listener.onTimeSet(getResult());
+                timeProperty.set(getResult());
             });
 
             hoursArrowDown.setOnMouseClicked(mouseEvent -> {
                 hoursLabel.setText(String.valueOf(hours == 0 ? hours : --hours));
-                listener.onTimeSet(getResult());
+                timeProperty.set(getResult());
             });
 
             minutesArrowUp.setOnMouseClicked(mouseEvent -> {
                 minutesLabel.setText(String.valueOf(minutes == 59 ? minutes : ++minutes));
-                listener.onTimeSet(getResult());
+                timeProperty.set(getResult());
             });
 
             minutesArrowDown.setOnMouseClicked(mouseEvent -> {
                 minutesLabel.setText(String.valueOf(minutes == 0 ? minutes : --minutes));
-                listener.onTimeSet(getResult());
+                timeProperty.set(getResult());
             });
 
             toggleGroup.selectedToggleProperty().addListener((observableValue, oldToggle, newToggle) -> {
                 if (!init)
-                    listener.onTimeSet(getResult());
+                    timeProperty.set(getResult());
+            });
+
+            timeProperty.addListener((observableValue, oldValue, newValue) -> {
+                init = true;
+                hours = newValue.hours();
+                minutes = newValue.minutes();
+
+                hoursLabel.setText(String.valueOf(hours));
+                minutesLabel.setText(String.valueOf(minutes));
+
+                toggleGroup.selectToggle(newValue.am_pm() == Time.AM_PM.AM ? amButton : pmButton);
+                init = false;
             });
 
             init = false;
         }
 
-        public Builder initTime(Time time) {
-            init = true;
-            hours = time.hours();
-            minutes = time.minutes();
-
-            hoursLabel.setText(String.valueOf(hours));
-            minutesLabel.setText(String.valueOf(minutes));
-
-            toggleGroup.selectToggle(time.am_pm() == Time.AM_PM.AM ? amButton : pmButton);
-            init = false;
+        public Builder setTime(@NotNull Time time) {
+            timeProperty.set(time);
 
             return this;
         }

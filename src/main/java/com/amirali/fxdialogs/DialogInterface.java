@@ -19,8 +19,4 @@ public interface DialogInterface {
     interface OnMultiChoiceSelectedListener {
         void onItemSelected(int which, boolean isChecked);
     }
-
-    interface OnTimeSetListener {
-        void onTimeSet(Time time);
-    }
 }

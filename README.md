@@ -11,11 +11,12 @@ This is a library to create AlertDialog , ProgressDialog and etc...
 
 ```java
 var alert = new AlertDialog.Builder()
-        .setTitle("Title")
-        .setMessage("Message")
+        .setDialogTitle("Title")
+        .setDialogMessage("Message")
         .setPositiveButton("Ok", System.out::println)
         .create();
 alert.initModality(Modality.APPLICATION_MODAL);
+alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
 
@@ -27,8 +28,8 @@ alert.show();
 
 ```java
 var alert = new AlertDialog.Builder()
-        .setTitle("Title")
-        .setMessage("Message")
+        .setDialogTitle("Title")
+        .setDialogMessage("Message")
         .setPositiveButton("Ok", System.out::println)
         .setMultiChoiceItems(new String[]{"A","B","C","D","E"}, new Integer[]{0,2,3}, (which, isChecked) -> {
             if (isChecked)
@@ -36,6 +37,7 @@ var alert = new AlertDialog.Builder()
             })
         .create();
 alert.initModality(Modality.APPLICATION_MODAL);
+alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
 
@@ -47,12 +49,13 @@ alert.show();
 
 ```java
 var alert = new AlertDialog.Builder()
-        .setTitle("Title")
-        .setMessage("Message")
+        .setDialogTitle("Title")
+        .setDialogMessage("Message")
         .setPositiveButton("Ok", System.out::println)
         .setSingleChoiceItems(new String[]{"A","B","C","D"}, 2, which -> System.out.println(which + "checked"))
         .create(); 
 alert.initModality(Modality.APPLICATION_MODAL);
+alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
 
@@ -72,12 +75,13 @@ textField.setPromptText("Name");
 customNodeContainer.getChildren().add(textField);
 
 var alert = new AlertDialog.Builder()
-        .setTitle("Name")
-        .setMessage("Enter your name in below text field")
+        .setDialogTitle("Name")
+        .setDialogMessage("Enter your name in below text field")
         .setPositiveButton("Ok", which -> System.out.println(textField.getText()))
         .setNode(customNodeContainer)
         .create();
 alert.initModality(Modality.APPLICATION_MODAL);
+alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
 
@@ -89,12 +93,13 @@ alert.show();
 
 ```java
 var alert = new AlertDialog.Builder()   
-        .setTitle("DialogWithSound")
-        .setMessage("The sound will be play when dialog shown")
+        .setDialogTitle("DialogWithSound")
+        .setDialogMessage("The sound will be play when dialog shown")
         .setPositiveButton("Ok", System.out::println)
         .setSound(Sounds.ChimesGlassy)
         .create();
 alert.initModality(Modality.APPLICATION_MODAL);
+alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
 
@@ -106,10 +111,12 @@ Note : you should add javafx.media dependency when you want to use sounds
 <summary>TimePickerDialog</summary>
 
 ```java
-var timePickerDialog = new TimePickerDialog.Builder(time -> System.out.println(time.toString()))
+var timePickerDialog = new TimePickerDialog.Builder()
         .create();
 timePickerDialog.initModality(Modality.APPLICATION_MODAL);
-timePickerDialog.show();
+timePickerDialog.showAndWait();
+
+System.out.println(timePickerDialog.getTime().toString());
 ```
 
 <img src="images/timepicker-dialog-demo.png" alt="TimePickerDialog">
@@ -120,14 +127,14 @@ timePickerDialog.show();
 
 ```java
 var progressDialog = new ProgressDialog.Builder()
-        .setTitle("Title")
-        .setMessage("Message")
-        .setProgressBar(ProgressDialog.ProgressBarType.Bar)
+        .setDialogTitle("Title")
+        .setDialogMessage("Message")
+        .setProgressType(ProgressDialog.ProgressBarType.Bar)
+        .setProgress(.5)
         .create();
 progressDialog.initModality(Modality.APPLICATION_MODAL);
+progressDialog.setTitle(progressDialog.getDialogTitle());
 progressDialog.show();
-
-progressDialog.setProgress(.5);
 ```
 
 <img src="images/progress-dialog-demo.png" alt="ProgressDialog">
@@ -141,7 +148,7 @@ try {
     System.out.println(20/0);
 }catch (ArithmeticException e) {
     var exceptionDialog = new ExceptionDialog.Builder()
-            .setMessage(e.getMessage())
+            .setDialogMessage(e.getMessage())
             .setException(e)
             .create();
     exceptionDialog.show();

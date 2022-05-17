@@ -1,15 +1,16 @@
 package com.amirali.fxdialogs;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,8 +29,6 @@ public final class ProgressDialog extends Stage {
     }
 
     private void setupDialog() {
-        if (builder.isTitleAdded)
-            setTitle(builder.title.getText());
         var scene = new Scene(builder.container);
         if (builder.styles.isEmpty()) {
             scene.getStylesheets().add(
@@ -44,12 +43,43 @@ public final class ProgressDialog extends Stage {
     }
 
     public void setProgress(double value) {
-        if (builder.isProgressAdded) {
-            if (builder.type == ProgressBarType.Bar)
-                builder.progressBar.setProgress(value);
-            else
-                builder.progressIndicator.setProgress(value);
-        }
+        builder.progressProperty.set(value);
+    }
+
+    public double getProgress() {
+        return builder.progressProperty.get();
+    }
+
+    public DoubleProperty getProgressProperty() {
+        return builder.progressProperty;
+    }
+
+    public void setDialogTitle(@NotNull String title) {
+        builder.dialogTitleProperty.set(title);
+    }
+
+    public String getDialogTitle() {
+        return builder.dialogTitleProperty.get();
+    }
+
+    public StringProperty dialogTitleProperty() {
+        return builder.dialogTitleProperty;
+    }
+
+    public void setDialogMessage(@NotNull String message) {
+        builder.dialogMessageProperty.set(message);
+    }
+
+    public String getDialogMessage() {
+        return builder.dialogMessageProperty.get();
+    }
+
+    public StringProperty dialogMessageProperty() {
+        return builder.dialogMessageProperty;
+    }
+
+    public ProgressBarType getProgressType() {
+        return builder.type;
     }
 
     public static class Builder {
@@ -67,6 +97,9 @@ public final class ProgressDialog extends Stage {
         // default progress type is Bar
         private ProgressBarType type = ProgressBarType.Bar;
         private final List<String> styles = new ArrayList<>();
+        private final StringProperty dialogTitleProperty = new SimpleStringProperty(), dialogMessageProperty = new SimpleStringProperty();
+        private final DoubleProperty progressProperty = new SimpleDoubleProperty();
+        private ProgressDialog progressDialog;
 
         public Builder() {
             // init
@@ -74,20 +107,43 @@ public final class ProgressDialog extends Stage {
             title.setId("title");
             title.setWrapText(true);
             title.setMaxWidth(Double.MAX_VALUE);
+            title.textProperty().bind(dialogTitleProperty);
             message.setId("message");
             message.setWrapText(true);
             message.setMaxWidth(Double.MAX_VALUE);
+            message.textProperty().bind(dialogMessageProperty);
             center.setPadding(new Insets(5));
             center.setAlignment(Pos.CENTER);
             top.setPadding(new Insets(10));
             progressBar.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(progressBar, Priority.ALWAYS);
-            container.setPrefWidth(200);
+            progressBar.progressProperty().bind(progressProperty);
+            progressIndicator.progressProperty().bind(progressProperty);
             container.setCenter(center);
             container.setTop(top);
+
+            dialogTitleProperty.addListener((observableValue, oldValue, newValue) -> {
+                if (!isTitleAdded) {
+                    top.getChildren().add(0, title);
+                    isTitleAdded = true;
+
+                    if (progressDialog != null)
+                        progressDialog.sizeToScene();
+                }
+            });
+
+            dialogMessageProperty.addListener((observableValue, oldValue, newValue) -> {
+                if (!isMessageAdded) {
+                    top.getChildren().add(message);
+                    isMessageAdded = true;
+
+                    if (progressDialog != null)
+                        progressDialog.sizeToScene();
+                }
+            });
         }
 
-        public Builder setProgressBar(@NotNull ProgressBarType type) {
+        public Builder setProgressType(@NotNull ProgressBarType type) {
             if (!isProgressAdded) {
                 this.type = type;
 
@@ -105,32 +161,19 @@ public final class ProgressDialog extends Stage {
         }
 
         public Builder setProgress(double value) {
-            if (isProgressAdded) {
-                if (type == ProgressBarType.Bar)
-                    progressBar.setProgress(value);
-                else
-                    progressIndicator.setProgress(value);
-            }
+            progressProperty.set(value);
 
             return this;
         }
 
-        public Builder setTitle(@NotNull String title) {
-            if (!isTitleAdded) {
-                top.getChildren().add(0, this.title);
-                isTitleAdded = true;
-            }
-            this.title.setText(title);
+        public Builder setDialogTitle(@NotNull String title) {
+            dialogTitleProperty.set(title);
 
             return this;
         }
 
-        public Builder setMessage(@NotNull String message) {
-            if (!isMessageAdded) {
-                top.getChildren().add(this.message);
-                isMessageAdded = true;
-            }
-            this.message.setText(message);
+        public Builder setDialogMessage(@NotNull String message) {
+            dialogMessageProperty.set(message);
 
             return this;
         }
@@ -142,7 +185,8 @@ public final class ProgressDialog extends Stage {
         }
 
         public ProgressDialog create() {
-            return new ProgressDialog(this);
+            progressDialog = new ProgressDialog(this);
+            return progressDialog;
         }
     }
 

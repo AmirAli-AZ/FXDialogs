@@ -1,5 +1,7 @@
 package com.amirali.fxdialogs;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -46,6 +48,30 @@ public final class AlertDialog extends Stage {
         }
     }
 
+    public void setDialogTitle(@NotNull String title) {
+        builder.dialogTitleProperty.set(title);
+    }
+
+    public String getDialogTitle() {
+        return builder.dialogTitleProperty.get();
+    }
+
+    public StringProperty dialogTitleProperty() {
+        return builder.dialogTitleProperty;
+    }
+
+    public void setDialogMessage(@NotNull String message) {
+        builder.dialogMessageProperty.set(message);
+    }
+
+    public String getDialogMessage() {
+        return builder.dialogMessageProperty.get();
+    }
+
+    public StringProperty dialogMessageProperty() {
+        return builder.dialogMessageProperty;
+    }
+
     public static class Builder {
 
         // UI components
@@ -75,8 +101,8 @@ public final class AlertDialog extends Stage {
                 naturalListeners = new ArrayList<>();
         private final List<String> styles = new ArrayList<>();
         private String soundPath;
-
         private AlertDialog dialog;
+        private final StringProperty dialogTitleProperty = new SimpleStringProperty(), dialogMessageProperty = new SimpleStringProperty();
 
         public Builder() {
             // init
@@ -84,17 +110,26 @@ public final class AlertDialog extends Stage {
             message.setId("message");
             message.setWrapText(true);
             message.setMaxWidth(Double.MAX_VALUE);
+            message.textProperty().bind(dialogMessageProperty);
+
             title.setId("title");
             title.setWrapText(true);
             title.setMaxWidth(Double.MAX_VALUE);
+            title.textProperty().bind(dialogTitleProperty);
+
             positiveButton.setId("positive-button");
             positiveButton.setDefaultButton(true);
+
             negativeButton.setId("negative-button");
+
             naturalButton.setId("natural-button");
             ButtonBar.setButtonData(naturalButton, ButtonBar.ButtonData.LEFT);
+
             buttons.setPadding(new Insets(10));
+
             radioButtonsContainer.setPadding(new Insets(10));
             checkBoxesContainer.setPadding(new Insets(10));
+
             center.setPrefWidth(400);
             center.setPadding(new Insets(10));
             top.setPadding(new Insets(10));
@@ -103,29 +138,43 @@ public final class AlertDialog extends Stage {
             container.setTop(top);
             container.setCenter(center);
             container.setBottom(buttons);
+
+            dialogTitleProperty.addListener((observableValue, oldValue, newValue) -> {
+                if (!isTitleAdded) {
+                    top.getChildren().add(0, this.title);
+
+                    isTitleAdded = true;
+
+                    if (dialog != null)
+                        dialog.sizeToScene();
+                }
+            });
+
+            dialogMessageProperty.addListener((observableValue, oldValue, newValue) -> {
+                if (!isMessageAdded) {
+                    top.getChildren().add(this.message);
+
+                    isMessageAdded = true;
+
+                    if (dialog != null)
+                        dialog.sizeToScene();
+                }
+            });
         }
 
-        public Builder setTitle(String title) {
-            this.title.setText(title);
-            if (!isTitleAdded) {
-                top.getChildren().add(0, this.title);
+        public Builder setDialogTitle(@NotNull String title) {
+            dialogTitleProperty.set(title);
 
-                isTitleAdded = true;
-            }
             return this;
         }
 
-        public Builder setMessage(String message) {
-            this.message.setText(message);
-            if (!isMessageAdded) {
-                top.getChildren().add(this.message);
+        public Builder setDialogMessage(@NotNull String message) {
+            dialogMessageProperty.set(message);
 
-                isMessageAdded = true;
-            }
             return this;
         }
 
-        public Builder setPositiveButton(String text, @NotNull DialogInterface.OnClickListener listener) {
+        public Builder setPositiveButton(@NotNull String text, @NotNull DialogInterface.OnClickListener listener) {
             positiveListeners.add(listener);
 
             positiveButton.setText(text);
@@ -143,14 +192,15 @@ public final class AlertDialog extends Stage {
             return this;
         }
 
-        public Builder setNegativeButton(String text, @NotNull DialogInterface.OnClickListener listener) {
+        public Builder setNegativeButton(@NotNull String text, @NotNull DialogInterface.OnClickListener listener) {
             negativeListeners.add(listener);
 
             negativeButton.setText(text);
             negativeButton.setOnAction(event -> {
                 for (DialogInterface.OnClickListener clickListener : negativeListeners)
                     clickListener.onClick(DialogInterface.NEGATIVE_BUTTON);
-                dialog.close();
+                if (dialog != null)
+                    dialog.close();
             });
 
             if (!isNegativeButtonAdded) {
@@ -161,14 +211,15 @@ public final class AlertDialog extends Stage {
             return this;
         }
 
-        public Builder setNaturalButton(String text, @NotNull DialogInterface.OnClickListener listener) {
+        public Builder setNaturalButton(@NotNull String text, @NotNull DialogInterface.OnClickListener listener) {
             naturalListeners.add(listener);
 
             naturalButton.setText(text);
             naturalButton.setOnAction(event -> {
                 for (DialogInterface.OnClickListener clickListener : naturalListeners)
                     clickListener.onClick(DialogInterface.NATURAL_BUTTON);
-                dialog.close();
+                if (dialog != null)
+                    dialog.close();
             });
 
             if (!isNaturalButtonAdded) {

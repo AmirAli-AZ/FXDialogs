@@ -11,6 +11,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -42,7 +43,7 @@ public class PersistentBottomSheet extends VBox {
         super(spacing);
     }
 
-    public void hide(Duration duration) {
+    public void hide(@NotNull Duration duration) {
         var transition = new TranslateTransition(duration, this);
         transition.setToY(getHeight());
         transition.setOnFinished(event -> {
