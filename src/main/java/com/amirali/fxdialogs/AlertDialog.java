@@ -402,7 +402,8 @@ public final class AlertDialog extends Stage {
 
         /**
          * sets the notification sound from Sounds and plays when stage is shown
-         * Note: You need to add javafx.media dependency to use sounds
+         * <br>
+         * <b>Note:</b> You need to add <b>javafx.media</b> dependency to use sounds
          * @param sound default notification sounds
          * @return Builder
          */
@@ -414,6 +415,8 @@ public final class AlertDialog extends Stage {
 
         /**
          * sets the notification sound from custom file path and plays when stage is shown
+         * <br>
+         * <b>Note:</b> You need to add <b>javafx.media</b> dependency to use sounds
          * @param path custom file path
          * @return Builder
          */
