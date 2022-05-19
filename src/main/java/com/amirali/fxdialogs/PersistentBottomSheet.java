@@ -33,12 +33,24 @@ public class PersistentBottomSheet extends VBox {
     private BottomSheetCallBack callBack;
 
     /**
-     * different states for bottom sheet behaviour
+     * when bottom sheet is collapsed
      */
     public static final int COLLAPSED = 604;
+    /**
+     * when bottom sheet is expanded
+     */
     public static final int EXPANDED = 688;
+    /**
+     * when bottom sheet is dragged by mouse
+     */
     public static final int DRAGGED = 85;
+    /**
+     * when bottom sheet is hidden
+     */
     public static final int HIDDEN = 744;
+    /**
+     * when bottom sheet is shown
+     */
     public static final int SHOWN = 451;
 
     /**
@@ -123,7 +135,8 @@ public class PersistentBottomSheet extends VBox {
     }
 
     /**
-     * @return showing state of bottom sheet
+     * showing state of bottom sheet
+     * @return boolean
      */
     public boolean isShowing() {
         return showingProperty.get();
@@ -138,7 +151,8 @@ public class PersistentBottomSheet extends VBox {
     }
 
     /**
-     * @return showing state property
+     * showing state property
+     * @return BooleanProperty
      */
     public BooleanProperty showingProperty() {
         return showingProperty;
@@ -198,7 +212,8 @@ public class PersistentBottomSheet extends VBox {
     }
 
     /**
-     * @return image property of dragHandler
+     * image property of dragHandler
+     * @return ObjectProperty
      */
     public ObjectProperty<Image> dragHandlerImageProperty() {
         return dragHandlerImageProperty;
@@ -213,7 +228,8 @@ public class PersistentBottomSheet extends VBox {
     }
 
     /**
-     * @return default show and hide animations duration
+     * default show and hide animations duration
+     * @return Duration
      */
     public Duration getDuration() {
         return duration;
@@ -228,7 +244,8 @@ public class PersistentBottomSheet extends VBox {
     }
 
     /**
-     * @return bottom sheet states callBack
+     * bottom sheet states callBack
+     * @return BottomSheetCallBack
      */
     public BottomSheetCallBack getCallBack() {
         return callBack;

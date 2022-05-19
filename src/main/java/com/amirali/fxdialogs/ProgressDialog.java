@@ -58,14 +58,16 @@ public final class ProgressDialog extends Stage {
     }
 
     /**
-     * @return progress value of the ProgressDialog
+     * progress value of the ProgressDialog
+     * @return double
      */
     public double getProgress() {
         return builder.progressProperty.get();
     }
 
     /**
-     * @return progress property
+     * DoubleProperty of the ProgressDialog progress
+     * @return DoubleProperty
      */
     public DoubleProperty getProgressProperty() {
         return builder.progressProperty;
@@ -80,14 +82,16 @@ public final class ProgressDialog extends Stage {
     }
 
     /**
-     * @return title of the ProgressDialog
+     * title of the ProgressDialog
+     * @return String
      */
     public String getDialogTitle() {
         return builder.dialogTitleProperty.get();
     }
 
     /**
-     * @return ProgressDialog title property
+     * StringProperty of the ProgressDialog title
+     * @return StringProperty
      */
     public StringProperty dialogTitleProperty() {
         return builder.dialogTitleProperty;
@@ -102,14 +106,16 @@ public final class ProgressDialog extends Stage {
     }
 
     /**
-     * @return message of the ProgressDialog
+     * message of the ProgressDialog
+     * @return String
      */
     public String getDialogMessage() {
         return builder.dialogMessageProperty.get();
     }
 
     /**
-     * @return ProgressDialog message property
+     * StringProperty of the ProgressDialog message
+     * @return StringProperty
      */
     public StringProperty dialogMessageProperty() {
         return builder.dialogMessageProperty;
@@ -117,7 +123,7 @@ public final class ProgressDialog extends Stage {
 
     /**
      * returns progress type of the ProgressDialog that can be Bar or Indicator
-     * @return progress type of the ProgressDialog
+     * @return ProgressBarType
      */
     public ProgressBarType getProgressType() {
         return builder.type;

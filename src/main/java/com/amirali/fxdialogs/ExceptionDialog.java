@@ -73,14 +73,16 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
     }
 
     /**
-     * @return message of the ExceptionDialog
+     * message of the ExceptionDialog
+     * @return String
      */
     public String getDialogMessage() {
         return builder.dialogMessageProperty.get();
     }
 
     /**
-     * @return message property of ExceptionDialog
+     * StringProperty of the ExceptionDialog message
+     * @return StringProperty
      */
     public StringProperty dialogMessageProperty() {
         return builder.dialogMessageProperty;
@@ -95,14 +97,16 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
     }
 
     /**
-     * @return exception as a Throwable
+     * exception as Throwable
+     * @return Throwable
      */
     public Throwable getException() {
         return builder.exceptionProperty.get();
     }
 
     /**
-     * @return object property of exception
+     * ObjectProperty of the exception
+     * @return ObjectProperty
      */
     public ObjectProperty<Throwable> exceptionProperty() {
         return builder.exceptionProperty;

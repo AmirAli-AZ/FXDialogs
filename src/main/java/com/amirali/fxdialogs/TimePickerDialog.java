@@ -59,14 +59,16 @@ public final class TimePickerDialog extends Stage {
     }
 
     /**
-     * @return arrow up image property
+     * arrow up image views image property
+     * @return ObjectProperty
      */
     public ObjectProperty<Image> arrowUpImageProperty() {
         return arrowUpImageProperty;
     }
 
     /**
-     * @return arrow down image property
+     * arrow down image views image property
+     * @return ObjectProperty
      */
     public ObjectProperty<Image> arrowDownImageProperty() {
         return arrowDownImageProperty;
@@ -81,7 +83,8 @@ public final class TimePickerDialog extends Stage {
     }
 
     /**
-     * @return time of the TimePickerDialog
+     * time of the TimePickerDialog
+     * @return Time
      */
     public Time getTime() {
         return builder.timeProperty.get();
@@ -89,7 +92,8 @@ public final class TimePickerDialog extends Stage {
 
 
     /**
-     * @return time object property
+     * ObjectProperty of the TimePickerDialog time
+     * @return ObjectProperty
      */
     public ObjectProperty<Time> timeProperty() {
         return builder.timeProperty;

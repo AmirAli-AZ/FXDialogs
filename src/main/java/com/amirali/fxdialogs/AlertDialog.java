@@ -71,7 +71,8 @@ public final class AlertDialog extends Stage {
     }
 
     /**
-     * @return AlertDialog title property
+     * StringProperty of AlertDialog title
+     * @return StringProperty
      */
     public StringProperty dialogTitleProperty() {
         return builder.dialogTitleProperty;
@@ -93,7 +94,8 @@ public final class AlertDialog extends Stage {
     }
 
     /**
-     * @return AlertDialog message property
+     * StringProperty of AlertDialog title
+     * @return StringProperty
      */
     public StringProperty dialogMessageProperty() {
         return builder.dialogMessageProperty;

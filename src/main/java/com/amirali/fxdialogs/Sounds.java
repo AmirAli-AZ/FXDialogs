@@ -33,7 +33,8 @@ public enum Sounds {
     private final String fileName;
 
     /**
-     * @return notification sound file name
+     * notification sound file name
+     * @return String
      */
     public String getFileName() {
         return fileName;

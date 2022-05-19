@@ -25,7 +25,8 @@ public record Time(int hours, int minutes, AM_PM am_pm) {
     }
 
     /**
-     * @return current time
+     * current time
+     * @return Time
      */
     public static Time getCurrentTime() {
         return new Time(
