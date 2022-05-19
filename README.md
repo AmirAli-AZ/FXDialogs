@@ -192,6 +192,33 @@ root.setCenter(new StackPane(showButton));
 root.setBottom(persistentBottomSheet);
 ```
 
+BottomSheetCallBack
+
+```java
+persistentBottomSheet.setCallBack(new BottomSheetCallBack() {
+    @Override
+    public void onState(PersistentBottomSheet bottomSheet, int state) {
+        switch (state) {
+            case PersistentBottomSheet.EXPANDED ->
+                    System.out.println("expanded");
+            case PersistentBottomSheet.COLLAPSED ->
+                    System.out.println("collapsed");
+            case PersistentBottomSheet.DRAGGED -> 
+                    System.out.println("dragged");
+            case PersistentBottomSheet.HIDDEN ->
+                    System.out.println("hidden");
+            case PersistentBottomSheet.SHOWN ->
+                    System.out.println("shown");
+        }
+    }
+
+    @Override
+    public void onResized(PersistentBottomSheet bottomSheet, int percent) {
+        System.out.println(percent + "%");
+    }
+});
+```
+
 <img src="images/persistent-bottom-sheet-demo-1.png" alt="PersistentBottomSheetDemo">
 <img src="images/persistent-bottom-sheet-demo-2.png" alt="PersistentBottomSheetDemo">
 

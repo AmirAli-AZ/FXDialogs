@@ -27,9 +27,8 @@ public class PersistentBottomSheet extends VBox {
                     Objects.requireNonNull(getClass().getResourceAsStream("icons/round_horizontal_rule_black_24dp.png"))
             )
     );
-    private boolean performingShowHide;
-    private boolean firstMouseDrag;
-    private double originalHeight;
+    private boolean performingShowHide, firstMouseDrag;
+    private double originalHeight, previousHeight;
     private Duration duration = Duration.seconds(1);
     private BottomSheetCallBack callBack;
 
@@ -179,15 +178,17 @@ public class PersistentBottomSheet extends VBox {
                         // return state
                         callBack.onState(this, DRAGGED);
 
-                        if (newHeight == originalHeight)
+                        if (newHeight == originalHeight && newHeight > previousHeight)
                             callBack.onState(this, EXPANDED);
-                        if (newHeight == dragArea.getHeight())
+                        if (newHeight == dragArea.getHeight() && newHeight < previousHeight)
                             callBack.onState(this, COLLAPSED);
 
                         // return slide percent
 
                         callBack.onResized(this, (int) ((newHeight - dragArea.getHeight()) / (originalHeight - dragArea.getHeight()) * 100));
                     }
+
+                    previousHeight = newHeight;
                 }
             }
         });
