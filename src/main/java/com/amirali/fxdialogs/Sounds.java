@@ -1,5 +1,9 @@
 package com.amirali.fxdialogs;
 
+/**
+ * @author Amir Ali
+ */
+
 public enum Sounds {
 
     Achievement("achievement-message-tone.mp3"),
@@ -26,13 +30,19 @@ public enum Sounds {
     Succeeded("succeeded-message-tone.mp3"),
     When("when-604.mp3");
 
-    private final String path;
+    private final String fileName;
 
-    public String getPath() {
-        return path;
+    /**
+     * @return notification sound file name
+     */
+    public String getFileName() {
+        return fileName;
     }
 
-    Sounds(String path) {
-        this.path = path;
+    /**
+     * @param fileName notification sound file name
+     */
+    Sounds(String fileName) {
+        this.fileName = fileName;
     }
 }

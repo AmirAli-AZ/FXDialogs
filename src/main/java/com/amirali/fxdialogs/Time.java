@@ -2,8 +2,21 @@ package com.amirali.fxdialogs;
 
 import java.util.Calendar;
 
+/**
+ * @author Amir Ali
+ * @param hours hours
+ * @param minutes minutes
+ * @param am_pm am_pm
+ */
 public record Time(int hours, int minutes, AM_PM am_pm) {
 
+    /**
+     * checks if (hour is more than 12 or less than 0) and (minute is more than 59 or less than 0),
+     * sets hours or minutes to 0 if it's true
+     * @param hours hours
+     * @param minutes minutes
+     * @param am_pm am_pm
+     */
     public Time {
         if (hours > 12 || hours < 0)
             hours = 0;
@@ -11,6 +24,9 @@ public record Time(int hours, int minutes, AM_PM am_pm) {
             minutes = 0;
     }
 
+    /**
+     * @return current time
+     */
     public static Time getCurrentTime() {
         return new Time(
                 Calendar.getInstance().get(Calendar.HOUR),
@@ -19,6 +35,9 @@ public record Time(int hours, int minutes, AM_PM am_pm) {
         );
     }
 
+    /**
+     * to specify am or pm
+     */
     public enum AM_PM {
         AM,PM
     }

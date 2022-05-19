@@ -15,10 +15,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+/**
+ * @author Amir Ali
+ */
+
 public final class AlertDialog extends Stage {
 
     private final Builder builder;
 
+    /**
+     * @param builder AlertDialog builder
+     */
     public AlertDialog(@NotNull Builder builder) {
         this.builder = builder;
         setupDialog();
@@ -48,30 +55,53 @@ public final class AlertDialog extends Stage {
         }
     }
 
+    /**
+     * sets title of the AlertDialog
+     * @param title title of the AlertDialog
+     */
     public void setDialogTitle(@NotNull String title) {
         builder.dialogTitleProperty.set(title);
     }
 
+    /**
+     * @return title of the AlertDialog
+     */
     public String getDialogTitle() {
         return builder.dialogTitleProperty.get();
     }
 
+    /**
+     * @return AlertDialog title property
+     */
     public StringProperty dialogTitleProperty() {
         return builder.dialogTitleProperty;
     }
 
+    /**
+     * sets message of the AlertDialog
+     * @param message message of the AlertDialog
+     */
     public void setDialogMessage(@NotNull String message) {
         builder.dialogMessageProperty.set(message);
     }
 
+    /**
+     * @return message of the AlertDialog
+     */
     public String getDialogMessage() {
         return builder.dialogMessageProperty.get();
     }
 
+    /**
+     * @return AlertDialog message property
+     */
     public StringProperty dialogMessageProperty() {
         return builder.dialogMessageProperty;
     }
 
+    /**
+     * AlertDialog builder
+     */
     public static class Builder {
 
         // UI components
@@ -104,6 +134,9 @@ public final class AlertDialog extends Stage {
         private AlertDialog dialog;
         private final StringProperty dialogTitleProperty = new SimpleStringProperty(), dialogMessageProperty = new SimpleStringProperty();
 
+        /**
+         * create initial layout
+         */
         public Builder() {
             // init
 
@@ -162,18 +195,35 @@ public final class AlertDialog extends Stage {
             });
         }
 
+        /**
+         * sets title of the AlertDialog
+         * @param title title of the AlertDialog
+         * @return Builder
+         */
         public Builder setDialogTitle(@NotNull String title) {
             dialogTitleProperty.set(title);
 
             return this;
         }
 
+        /**
+         * sets message of the AlertDialog
+         * @param message message of the AlertDialog
+         * @return Builder
+         */
         public Builder setDialogMessage(@NotNull String message) {
             dialogMessageProperty.set(message);
 
             return this;
         }
 
+        /**
+         * creates the positive button
+         * @param text text of the button
+         * @param listener button onClickListener,
+         *                 when the button is clicked, the dialog closes
+         * @return Builder
+         */
         public Builder setPositiveButton(@NotNull String text, @NotNull DialogInterface.OnClickListener listener) {
             positiveListeners.add(listener);
 
@@ -192,6 +242,13 @@ public final class AlertDialog extends Stage {
             return this;
         }
 
+        /**
+         * creates the negative button
+         * @param text text of the button
+         * @param listener button onClickListener,
+         *                 when the button is clicked, the dialog closes
+         * @return Builder
+         */
         public Builder setNegativeButton(@NotNull String text, @NotNull DialogInterface.OnClickListener listener) {
             negativeListeners.add(listener);
 
@@ -211,6 +268,13 @@ public final class AlertDialog extends Stage {
             return this;
         }
 
+        /**
+         * creates the natural button on the left side of the button bar
+         * @param text text of the button
+         * @param listener button onClickListener,
+         *                 when the button is clicked, the dialog closes
+         * @return Builder
+         */
         public Builder setNaturalButton(@NotNull String text, @NotNull DialogInterface.OnClickListener listener) {
             naturalListeners.add(listener);
 
@@ -230,12 +294,24 @@ public final class AlertDialog extends Stage {
             return this;
         }
 
+        /**
+         * adds styles to style list and that list will be added to the scene
+         * @param styles dialog styles
+         * @return Builder
+         */
         public Builder addStyles(@NotNull String... styles) {
             Collections.addAll(this.styles, styles);
 
             return this;
         }
 
+        /**
+         * creates and adds RadioButton according to the items passed
+         * @param items RadioButtons texts
+         * @param selectedIndex default selected RadioButton
+         * @param listener selected listener
+         * @return Builder
+         */
         public Builder setSingleChoiceItems(@NotNull String[] items, int selectedIndex, @NotNull DialogInterface.OnSingleChoiceSelectedListener listener) {
             if (isCheckBoxesContainerAdded || isCustomNode)
                 return this;
@@ -261,10 +337,23 @@ public final class AlertDialog extends Stage {
             return this;
         }
 
+        /**
+         * creates and adds RadioButton according to the items passed without default selected item
+         * @param items RadioButtons texts
+         * @param listener selected listener
+         * @return Builder
+         */
         public Builder setSingleChoiceItems(@NotNull String[] items, @NotNull DialogInterface.OnSingleChoiceSelectedListener listener) {
             return setSingleChoiceItems(items, -1, listener);
         }
 
+        /**
+         * creates and adds CheckBoxes according to the items passed
+         * @param items CheckBoxes texts
+         * @param selectedIndexes default selected items
+         * @param listener selected listener
+         * @return Builder
+         */
         public Builder setMultiChoiceItems(@NotNull String[] items, @NotNull Integer[] selectedIndexes, @NotNull DialogInterface.OnMultiChoiceSelectedListener listener) {
             if (isRadioButtonsContainerAdded || isCustomNode)
                 return this;
@@ -289,10 +378,21 @@ public final class AlertDialog extends Stage {
             return this;
         }
 
+        /**
+         * creates and adds CheckBoxes according to the items passed without default selected items
+         * @param items CheckBoxes texts
+         * @param listener selected listener
+         * @return Builder
+         */
         public Builder setMultiChoiceItems(@NotNull String[] items, @NotNull DialogInterface.OnMultiChoiceSelectedListener listener) {
             return setMultiChoiceItems(items, new Integer[]{}, listener);
         }
 
+        /**
+         * sets the custom node to the center of the dialog
+         * @param node custom node
+         * @return Builder
+         */
         public Builder setNode(@NotNull Node node) {
             container.setCenter(node);
             isCustomNode = true;
@@ -300,18 +400,33 @@ public final class AlertDialog extends Stage {
             return this;
         }
 
+        /**
+         * sets the notification sound from Sounds and plays when stage is shown
+         * Note: You need to add javafx.media dependency to use sounds
+         * @param sound default notification sounds
+         * @return Builder
+         */
         public Builder setSound(@NotNull Sounds sound) {
-            soundPath = Objects.requireNonNull(getClass().getResource("sounds/" + sound.getPath())).toExternalForm();
+            soundPath = Objects.requireNonNull(getClass().getResource("sounds/" + sound.getFileName())).toExternalForm();
 
             return this;
         }
 
+        /**
+         * sets the notification sound from custom file path and plays when stage is shown
+         * @param path custom file path
+         * @return Builder
+         */
         public Builder setSound(@NotNull String path) {
             soundPath = path;
 
             return this;
         }
 
+        /**
+         * creates AlertDialog
+         * @return AlertDialog
+         */
         public AlertDialog create() {
             dialog = new AlertDialog(this);
             return dialog;

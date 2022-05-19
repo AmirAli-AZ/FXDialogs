@@ -19,10 +19,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * @author Amir Ali
+ */
+
 public final class ProgressDialog extends Stage {
 
     private final Builder builder;
 
+    /**
+     * @param builder ProgressDialog builder
+     */
     public ProgressDialog(@NotNull Builder builder) {
         this.builder = builder;
         setupDialog();
@@ -42,46 +49,83 @@ public final class ProgressDialog extends Stage {
         setScene(scene);
     }
 
+    /**
+     * sets progress of the ProgressDialog
+     * @param value new progress value
+     */
     public void setProgress(double value) {
         builder.progressProperty.set(value);
     }
 
+    /**
+     * @return progress value of the ProgressDialog
+     */
     public double getProgress() {
         return builder.progressProperty.get();
     }
 
+    /**
+     * @return progress property
+     */
     public DoubleProperty getProgressProperty() {
         return builder.progressProperty;
     }
 
+    /**
+     * sets title of the dialog
+     * @param title title of the ProgressDialog
+     */
     public void setDialogTitle(@NotNull String title) {
         builder.dialogTitleProperty.set(title);
     }
 
+    /**
+     * @return title of the ProgressDialog
+     */
     public String getDialogTitle() {
         return builder.dialogTitleProperty.get();
     }
 
+    /**
+     * @return ProgressDialog title property
+     */
     public StringProperty dialogTitleProperty() {
         return builder.dialogTitleProperty;
     }
 
+    /**
+     * sets message of the ProgressDialog
+     * @param message message of the ProgressDialog
+     */
     public void setDialogMessage(@NotNull String message) {
         builder.dialogMessageProperty.set(message);
     }
 
+    /**
+     * @return message of the ProgressDialog
+     */
     public String getDialogMessage() {
         return builder.dialogMessageProperty.get();
     }
 
+    /**
+     * @return ProgressDialog message property
+     */
     public StringProperty dialogMessageProperty() {
         return builder.dialogMessageProperty;
     }
 
+    /**
+     * returns progress type of the ProgressDialog that can be Bar or Indicator
+     * @return progress type of the ProgressDialog
+     */
     public ProgressBarType getProgressType() {
         return builder.type;
     }
 
+    /**
+     * ProgressDialog builder
+     */
     public static class Builder {
 
         // UI components
@@ -101,6 +145,9 @@ public final class ProgressDialog extends Stage {
         private final DoubleProperty progressProperty = new SimpleDoubleProperty();
         private ProgressDialog progressDialog;
 
+        /**
+         * creates initial layout
+         */
         public Builder() {
             // init
 
@@ -143,6 +190,11 @@ public final class ProgressDialog extends Stage {
             });
         }
 
+        /**
+         * sets progress type of the ProgressDialog that can be Bar or Indicator
+         * @param type progress type
+         * @return Builder
+         */
         public Builder setProgressType(@NotNull ProgressBarType type) {
             if (!isProgressAdded) {
                 this.type = type;
@@ -160,36 +212,63 @@ public final class ProgressDialog extends Stage {
             return this;
         }
 
+        /**
+         * sets progress of the ProgressDialog
+         * @param value new progress value
+         * @return Builder
+         */
         public Builder setProgress(double value) {
             progressProperty.set(value);
 
             return this;
         }
 
+        /**
+         * sets title of the ProgressDialog
+         * @param title title of the ProgressDialog
+         * @return Builder
+         */
         public Builder setDialogTitle(@NotNull String title) {
             dialogTitleProperty.set(title);
 
             return this;
         }
 
+        /**
+         * sets message of the ProgressDialog
+         * @param message message of the ProgressDialog
+         * @return Builder
+         */
         public Builder setDialogMessage(@NotNull String message) {
             dialogMessageProperty.set(message);
 
             return this;
         }
 
+        /**
+         * adds styles to style list and that list will be added to the scene
+         * @param styles dialog styles
+         * @return Builder
+         */
         public Builder setStyles(@NotNull String... styles) {
             Collections.addAll(this.styles, styles);
 
             return this;
         }
 
+        /**
+         * creates ProgressDialog
+         * @return ProgressDialog
+         */
         public ProgressDialog create() {
             progressDialog = new ProgressDialog(this);
             return progressDialog;
         }
     }
 
+    /**
+     * progress types that can be Bar or Indicator
+     */
     public enum ProgressBarType {
         Indicator,Bar
     }

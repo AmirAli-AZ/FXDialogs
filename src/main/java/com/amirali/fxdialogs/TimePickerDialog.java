@@ -15,6 +15,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+/**
+ * @author Amir Ali
+ */
+
 public final class TimePickerDialog extends Stage {
 
     private final Builder builder;
@@ -29,6 +33,9 @@ public final class TimePickerDialog extends Stage {
             )
     );
 
+    /**
+     * @param builder TimePickerDialog builder
+     */
     public TimePickerDialog(@NotNull Builder builder) {
         this.builder = builder;
         setupDialog();
@@ -51,39 +58,46 @@ public final class TimePickerDialog extends Stage {
         setScene(scene);
     }
 
-    public void initTime(Time time) {
-        builder.init = true;
-        builder.hours = time.hours();
-        builder.minutes = time.minutes();
-
-        builder.hoursLabel.setText(String.valueOf(builder.hours));
-        builder.minutesLabel.setText(String.valueOf(builder.minutes));
-
-        builder.toggleGroup.selectToggle(time.am_pm() == Time.AM_PM.AM ? builder.amButton : builder.pmButton);
-        builder.init = false;
-    }
-
+    /**
+     * @return arrow up image property
+     */
     public ObjectProperty<Image> arrowUpImageProperty() {
         return arrowUpImageProperty;
     }
 
+    /**
+     * @return arrow down image property
+     */
     public ObjectProperty<Image> arrowDownImageProperty() {
         return arrowDownImageProperty;
     }
 
+    /**
+     * sets time of the TimePickerDialog
+     * @param time new time of the TimePickerDialog
+     */
     public void setTime(@NotNull Time time) {
         builder.timeProperty.set(time);
     }
 
+    /**
+     * @return time of the TimePickerDialog
+     */
     public Time getTime() {
         return builder.timeProperty.get();
     }
 
 
+    /**
+     * @return time object property
+     */
     public ObjectProperty<Time> timeProperty() {
         return builder.timeProperty;
     }
 
+    /**
+     * TimePickerDialog builder
+     */
     public static class Builder {
 
         // UI components
@@ -101,6 +115,9 @@ public final class TimePickerDialog extends Stage {
         private boolean init = true;
         private final ObjectProperty<Time> timeProperty = new SimpleObjectProperty<>();
 
+        /**
+         * creates initial layout
+         */
         public Builder() {
             // init
 
@@ -195,12 +212,22 @@ public final class TimePickerDialog extends Stage {
             init = false;
         }
 
+        /**
+         * sets time of the TimePickerDialog
+         * @param time new time of the TimePickerDialog
+         * @return Builder
+         */
         public Builder setTime(@NotNull Time time) {
             timeProperty.set(time);
 
             return this;
         }
 
+        /**
+         * adds styles to style list and that list will be added to the scene
+         * @param styles dialog styles
+         * @return Builder
+         */
         public Builder setStyles(@NotNull String... styles) {
             Collections.addAll(this.styles, styles);
 
@@ -230,6 +257,10 @@ public final class TimePickerDialog extends Stage {
             minutesArrowDown.imageProperty().bind(imageProperty);
         }
 
+        /**
+         * creates TimePickerDialog
+         * @return TimePickerDialog
+         */
         public TimePickerDialog create() {
             return new TimePickerDialog(this);
         }

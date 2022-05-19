@@ -23,10 +23,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * @author Amir Ali
+ */
+
 public final class ExceptionDialog extends Dialog<ButtonType> {
 
     private final Builder builder;
 
+    /**
+     * @param builder ExceptionDialog builder
+     */
     public ExceptionDialog(@NotNull Builder builder) {
         this.builder = builder;
         setupDialog();
@@ -50,35 +57,61 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
             scene.getStylesheets().addAll(builder.styles);
     }
 
+    /**
+     * @return image property of the error icon
+     */
     public ObjectProperty<Image> errorIconImageProperty() {
         return builder.errorIconImageProperty;
     }
 
+    /**
+     * sets message of the ExceptionDialog
+     * @param message message of the ExceptionDialog
+     */
     public void setDialogMessage(@NotNull String message) {
         builder.dialogMessageProperty.set(message);
     }
 
+    /**
+     * @return message of the ExceptionDialog
+     */
     public String getDialogMessage() {
         return builder.dialogMessageProperty.get();
     }
 
+    /**
+     * @return message property of ExceptionDialog
+     */
     public StringProperty dialogMessageProperty() {
         return builder.dialogMessageProperty;
     }
 
+    /**
+     * sets exceptions to the text area
+     * @param exception Throwable
+     */
     public void setException(@NotNull Throwable exception) {
         builder.exceptionProperty.set(exception);
     }
 
+    /**
+     * @return exception as a Throwable
+     */
     public Throwable getException() {
         return builder.exceptionProperty.get();
     }
 
+    /**
+     * @return object property of exception
+     */
     public ObjectProperty<Throwable> exceptionProperty() {
         return builder.exceptionProperty;
     }
 
 
+    /**
+     * ExceptionDialog builder
+     */
     public static class Builder {
 
         // UI components
@@ -95,6 +128,9 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
         private final ObjectProperty<Throwable> exceptionProperty = new SimpleObjectProperty<>();
         private final StringProperty dialogMessageProperty = new SimpleStringProperty();
 
+        /**
+         * creates initial layout
+         */
         public Builder() {
             ImageView errorIcon = new ImageView();
             errorIcon.setId("error-icon");
@@ -125,30 +161,54 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
             });
         }
 
+        /**
+         * sets message of the ExceptionDialog
+         * @param message message of the ExceptionDialog
+         * @return Builder
+         */
         public Builder setDialogMessage(@NotNull String message) {
             dialogMessageProperty.set(message);
 
             return this;
         }
 
+        /**
+         * sets exceptions to the text area
+         * @param exception Throwable
+         * @return Builder
+         */
         public Builder setException(@NotNull Throwable exception) {
             exceptionProperty.set(exception);
 
             return this;
         }
 
+        /**
+         * adds buttons to the dialog pane
+         * @param buttonTypes buttons
+         * @return Builder
+         */
         public Builder addButtons(@NotNull ButtonType... buttonTypes) {
             Collections.addAll(this.buttonTypes, buttonTypes);
 
             return this;
         }
 
+        /**
+         * adds styles to style list and that list will be added to the scene
+         * @param styles dialog styles
+         * @return Builder
+         */
         public Builder setStyles(@NotNull String... styles) {
             Collections.addAll(this.styles, styles);
 
             return this;
         }
 
+        /**
+         * creates ExceptionDialog
+         * @return ExceptionDialog
+         */
         public ExceptionDialog create() {
             return new ExceptionDialog(this);
         }
