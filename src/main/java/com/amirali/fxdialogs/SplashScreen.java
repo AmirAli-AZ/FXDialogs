@@ -2,7 +2,9 @@ package com.amirali.fxdialogs;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -34,13 +36,16 @@ public final class SplashScreen extends Stage {
     private void setupSplashScreen() {
         setAlwaysOnTop(true);
         initStyle(StageStyle.UNDECORATED);
-        if (builder.container != null) {
+
+        if (builder.scene != null) {
+            setScene(builder.scene);
+        } else if (builder.container != null) {
             var scene = new Scene(builder.container);
             if (!builder.styles.isEmpty())
                 scene.getStylesheets().addAll(builder.styles);
             setScene(scene);
-        }else {
-            throw new NullPointerException("container cannot be null");
+        } else {
+            throw new NullPointerException("container or scene cannot be null");
         }
 
         addEventHandler(WindowEvent.WINDOW_SHOWN, windowEvent -> {
@@ -52,6 +57,7 @@ public final class SplashScreen extends Stage {
 
     /**
      * elapsed time of the total time
+     *
      * @return Duration
      */
     public Duration getCurrentTime() {
@@ -60,6 +66,7 @@ public final class SplashScreen extends Stage {
 
     /**
      * elapsed time of the total time as a read only property
+     *
      * @return ReadOnlyObjectProperty
      */
     public ReadOnlyObjectProperty<Duration> currentTimeProperty() {
@@ -68,6 +75,7 @@ public final class SplashScreen extends Stage {
 
     /**
      * total time
+     *
      * @return Duration
      */
     public Duration getTotalTime() {
@@ -77,6 +85,7 @@ public final class SplashScreen extends Stage {
 
     /**
      * total time as a read only property
+     *
      * @return ReadOnlyObjectProperty
      */
     public ReadOnlyObjectProperty<Duration> totalTimeProperty() {
@@ -93,12 +102,14 @@ public final class SplashScreen extends Stage {
         private final ObjectProperty<Duration> totalTimeProperty;
         private Parent container;
         private SplashScreenCallBack callBack;
+        private Scene scene;
 
         private SplashScreen splashScreen;
 
         /**
          * initial SplashScreen
-         * @param duration duration of the SplashScreen
+         *
+         * @param duration     duration of the SplashScreen
          * @param primaryStage primary stage
          * @throws IllegalStateException Cannot show the SplashScreen once primaryStage has been set visible
          */
@@ -125,6 +136,7 @@ public final class SplashScreen extends Stage {
 
         /**
          * adds styles to style list and that list will be added to the scene
+         *
          * @param styles SplashScreen styles
          * @return Builder
          */
@@ -136,6 +148,7 @@ public final class SplashScreen extends Stage {
 
         /**
          * sets container layout of the SplashScreen
+         *
          * @param container Parent
          * @return Builder
          */
@@ -146,7 +159,20 @@ public final class SplashScreen extends Stage {
         }
 
         /**
+         * sets scene of the SplashScreen
+         *
+         * @param scene SplashScreen scene
+         * @return Builder
+         */
+        public Builder setScene(@NotNull Scene scene) {
+            this.scene = scene;
+
+            return this;
+        }
+
+        /**
          * sets callBack for SplashScreen events
+         *
          * @param callBack SplashScreenCallBack
          * @return Builder
          */
@@ -155,8 +181,10 @@ public final class SplashScreen extends Stage {
 
             return this;
         }
+
         /**
          * creates SplashScreen
+         *
          * @return SplashScreenWindow
          */
         public SplashScreen create() {

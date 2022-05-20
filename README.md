@@ -224,6 +224,63 @@ persistentBottomSheet.setCallBack(new BottomSheetCallBack() {
 
 </details>
 
+<details>
+<summary>SplashScreen</summary>
+
+```java
+import javafx.application.Application;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+public class Main extends Application {
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("SplashScreenDemo");
+        primaryStage.setScene(new Scene(createContent(), 600, 400));
+
+        var splashScreen = new SplashScreen.Builder(Duration.seconds(2), primaryStage)
+                .setScene(new Scene(createSplashScreenContent(), 600, 400))
+                .create();
+        splashScreen.show();
+    }
+
+    private Parent createSplashScreenContent() {
+        var label = new Label("SplashScreenDemo");
+        label.setStyle("-fx-font-size: 25px; -fx-font-weight: bold; -fx-text-fill: white;");
+
+        var root = new StackPane(label);
+        root.setStyle("-fx-background-color: linear-gradient(to right, #FF508E, #5AC0FF);");
+
+        return root;
+    }
+
+    private Parent createContent() {
+        var label = new Label("Hello, World");
+        label.setStyle("-fx-font-size: 20px;");
+
+        var root = new StackPane(label);
+        root.setStyle("-fx-background-color: white;");
+
+        return root;
+    }
+}
+```
+
+<img src="images/splashscreen-demo-1.png" alt="SplashScreenDemo">
+
+after 2 seconds
+
+<img src="images/splashscreen-demo-2.png" alt="SplashScreenDemo">
+</details>
 
 ### Styling
 
