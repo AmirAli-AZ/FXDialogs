@@ -306,6 +306,8 @@ after 2 seconds
 
 - style sheet
 
+`style.css`
+
 ```
 #root {
     -fx-background-color: white;
