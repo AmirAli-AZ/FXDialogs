@@ -282,6 +282,70 @@ after 2 seconds
 <img src="images/splashscreen-demo-2.png" alt="SplashScreenDemo">
 </details>
 
+<details>
+<summary>PopupNotification</summary>
+
+- create notification layout (of course you can set controller)
+
+`notification-view.fxml`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane id="root" prefHeight="150.0" prefWidth="320.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label id="title" fx:id="title" layoutX="14.0" layoutY="14.0" text="ExampleNotification" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <Label id="message" fx:id="message" layoutX="8.0" layoutY="46.0" text="This is a custom notification" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+   </children>
+</AnchorPane>
+```
+
+- styles sheet
+
+```
+#root {
+    -fx-background-color: white;
+    -fx-background-insets: 5;
+    -fx-padding: 8;
+    -fx-effect: dropshadow(three-pass-box, black, 10, 0, 0, 0);
+    -fx-background-radius: 5;
+}
+
+#title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+#title {
+    -fx-font-size: 16px;
+}
+```
+
+- create and show the notification
+
+```java
+try {
+    var loader = new FXMLLoader(getClass().getResource("notification-view.fxml"));
+
+    var notification = new PopupNotification(((AnchorPane) loader.load()));
+    notification.setSound(Sounds.Succeeded);
+    notification.setAutoHide(true);
+    notification.show(primaryStage);
+}catch (IOException e) {
+    e.printStackTrace();
+}
+```
+
+result :
+
+<img src="images/notification-demo.png" alt="notification demo">
+
+</details>
+
 ### Styling
 
 You can use `.setStyles(String... styles)` to add custom css styles to dialog
