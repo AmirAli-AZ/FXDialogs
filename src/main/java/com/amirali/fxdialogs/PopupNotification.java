@@ -20,7 +20,6 @@ import java.util.Objects;
 public class PopupNotification extends Popup {
 
     private NotificationPosition position = NotificationPosition.BOTTOM_RIGHT;
-    private final Location location = new Location();
     private final ObjectProperty<Insets> marginProperty = new SimpleObjectProperty<>(new Insets(0));
     private String soundPath;
 
@@ -42,43 +41,40 @@ public class PopupNotification extends Popup {
         });
     }
 
-    private void calculatePosition(@NotNull NotificationPosition position, @NotNull Insets padding) {
+    private void calculatePosition(@NotNull NotificationPosition position, @NotNull Insets margin) {
         var visualBounds = Screen.getPrimary().getVisualBounds();
 
         switch (position) {
             case BOTTOM_RIGHT -> {
-                location.x = visualBounds.getMinX() + (visualBounds.getWidth() - getWidth()) - padding.getRight();
-                location.y = visualBounds.getMinY() + (visualBounds.getHeight() - getHeight()) - padding.getBottom();
+                setX(visualBounds.getMinX() + (visualBounds.getWidth() - getWidth()) - margin.getRight());
+                setY(visualBounds.getMinY() + (visualBounds.getHeight() - getHeight()) - margin.getBottom());
             }
 
             case BOTTOM_LEFT -> {
-                location.x = padding.getLeft();
-                location.y = visualBounds.getMinY() + (visualBounds.getHeight() - getHeight()) - padding.getBottom();
+                setX(margin.getLeft());
+                setY(visualBounds.getMinY() + (visualBounds.getHeight() - getHeight()) - margin.getBottom());
             }
 
             case CENTER_BOTTOM -> {
-                location.x = (visualBounds.getWidth() - getWidth()) / 2;
-                location.y = visualBounds.getMinY() + (visualBounds.getHeight() - getHeight()) - padding.getBottom();
+                setX((visualBounds.getWidth() - getWidth()) / 2);
+                setY(visualBounds.getMinY() + (visualBounds.getHeight() - getHeight()) - margin.getBottom());
             }
 
             case TOP_RIGHT -> {
-                location.x = visualBounds.getMinX() + (visualBounds.getWidth() - getWidth()) - padding.getRight();
-                location.y = padding.getTop();
+                setX(visualBounds.getMinX() + (visualBounds.getWidth() - getWidth()) - margin.getRight());
+                setY(margin.getTop());
             }
 
             case TOP_LEFT -> {
-                location.x = padding.getLeft();
-                location.y = padding.getTop();
+                setX(margin.getLeft());
+                setY(margin.getTop());
             }
 
             case CENTER_TOP -> {
-                location.x = (visualBounds.getWidth() - getWidth()) / 2;
-                location.y = padding.getTop();
+                setX((visualBounds.getWidth() - getWidth()) / 2);
+                setY(margin.getTop());
             }
         }
-
-        setX(location.x);
-        setY(location.y);
     }
 
     /**
@@ -137,9 +133,5 @@ public class PopupNotification extends Popup {
      */
     public void setSound(@NotNull String path) {
         soundPath = Paths.get(path).toUri().toString();
-    }
-
-    private static class Location {
-        public double x, y;
     }
 }
