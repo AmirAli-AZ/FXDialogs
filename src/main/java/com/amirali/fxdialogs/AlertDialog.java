@@ -13,7 +13,11 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Amir Ali
@@ -47,16 +51,18 @@ public final class AlertDialog extends Stage {
 
         // play audio when stage is shown
 
-        if (builder.soundPath != null) {
-            addEventHandler(WindowEvent.WINDOW_SHOWN, windowEvent -> {
+
+        addEventHandler(WindowEvent.WINDOW_SHOWN, windowEvent -> {
+            if (builder.soundPath != null) {
                 var player = new AudioClip(builder.soundPath);
                 player.play();
-            });
-        }
+            }
+        });
     }
 
     /**
      * sets title of the AlertDialog
+     *
      * @param title title of the AlertDialog
      */
     public void setDialogTitle(@NotNull String title) {
@@ -72,6 +78,7 @@ public final class AlertDialog extends Stage {
 
     /**
      * StringProperty of AlertDialog title
+     *
      * @return StringProperty
      */
     public StringProperty dialogTitleProperty() {
@@ -80,6 +87,7 @@ public final class AlertDialog extends Stage {
 
     /**
      * sets message of the AlertDialog
+     *
      * @param message message of the AlertDialog
      */
     public void setDialogMessage(@NotNull String message) {
@@ -95,10 +103,33 @@ public final class AlertDialog extends Stage {
 
     /**
      * StringProperty of AlertDialog title
+     *
      * @return StringProperty
      */
     public StringProperty dialogMessageProperty() {
         return builder.dialogMessageProperty;
+    }
+
+    /**
+     * sets the notification sound from Sounds and plays when stage is shown
+     * <br>
+     * <b>Note:</b> You need to add <b>javafx.media</b> dependency to use sounds
+     *
+     * @param sound default notification sounds
+     */
+    public void setSound(@NotNull Sounds sound) {
+        builder.soundPath = Objects.requireNonNull(getClass().getResource("sounds/" + sound.getFileName())).toExternalForm();
+    }
+
+    /**
+     * sets the notification sound from custom file path and plays when stage is shown
+     * <br>
+     * <b>Note:</b> You need to add <b>javafx.media</b> dependency to use sounds
+     *
+     * @param path custom file path
+     */
+    public void setSound(@NotNull String path) {
+        builder.soundPath = Paths.get(path).toUri().toString();
     }
 
     /**
@@ -199,6 +230,7 @@ public final class AlertDialog extends Stage {
 
         /**
          * sets title of the AlertDialog
+         *
          * @param title title of the AlertDialog
          * @return Builder
          */
@@ -210,6 +242,7 @@ public final class AlertDialog extends Stage {
 
         /**
          * sets message of the AlertDialog
+         *
          * @param message message of the AlertDialog
          * @return Builder
          */
@@ -221,7 +254,8 @@ public final class AlertDialog extends Stage {
 
         /**
          * creates the positive button
-         * @param text text of the button
+         *
+         * @param text     text of the button
          * @param listener button onClickListener,
          *                 when the button is clicked, the dialog closes
          * @return Builder
@@ -246,7 +280,8 @@ public final class AlertDialog extends Stage {
 
         /**
          * creates the negative button
-         * @param text text of the button
+         *
+         * @param text     text of the button
          * @param listener button onClickListener,
          *                 when the button is clicked, the dialog closes
          * @return Builder
@@ -272,7 +307,8 @@ public final class AlertDialog extends Stage {
 
         /**
          * creates the natural button on the left side of the button bar
-         * @param text text of the button
+         *
+         * @param text     text of the button
          * @param listener button onClickListener,
          *                 when the button is clicked, the dialog closes
          * @return Builder
@@ -298,6 +334,7 @@ public final class AlertDialog extends Stage {
 
         /**
          * adds styles to style list and that list will be added to the scene
+         *
          * @param styles dialog styles
          * @return Builder
          */
@@ -309,9 +346,10 @@ public final class AlertDialog extends Stage {
 
         /**
          * creates and adds RadioButton according to the items passed
-         * @param items RadioButtons texts
+         *
+         * @param items         RadioButtons texts
          * @param selectedIndex default selected RadioButton
-         * @param listener selected listener
+         * @param listener      selected listener
          * @return Builder
          */
         public Builder setSingleChoiceItems(@NotNull String[] items, int selectedIndex, @NotNull DialogInterface.OnSingleChoiceSelectedListener listener) {
@@ -341,7 +379,8 @@ public final class AlertDialog extends Stage {
 
         /**
          * creates and adds RadioButton according to the items passed without default selected item
-         * @param items RadioButtons texts
+         *
+         * @param items    RadioButtons texts
          * @param listener selected listener
          * @return Builder
          */
@@ -351,9 +390,10 @@ public final class AlertDialog extends Stage {
 
         /**
          * creates and adds CheckBoxes according to the items passed
-         * @param items CheckBoxes texts
+         *
+         * @param items           CheckBoxes texts
          * @param selectedIndexes default selected items
-         * @param listener selected listener
+         * @param listener        selected listener
          * @return Builder
          */
         public Builder setMultiChoiceItems(@NotNull String[] items, @NotNull Integer[] selectedIndexes, @NotNull DialogInterface.OnMultiChoiceSelectedListener listener) {
@@ -382,7 +422,8 @@ public final class AlertDialog extends Stage {
 
         /**
          * creates and adds CheckBoxes according to the items passed without default selected items
-         * @param items CheckBoxes texts
+         *
+         * @param items    CheckBoxes texts
          * @param listener selected listener
          * @return Builder
          */
@@ -392,6 +433,7 @@ public final class AlertDialog extends Stage {
 
         /**
          * sets the custom node to the center of the dialog
+         *
          * @param node custom node
          * @return Builder
          */
@@ -406,6 +448,7 @@ public final class AlertDialog extends Stage {
          * sets the notification sound from Sounds and plays when stage is shown
          * <br>
          * <b>Note:</b> You need to add <b>javafx.media</b> dependency to use sounds
+         *
          * @param sound default notification sounds
          * @return Builder
          */
@@ -419,17 +462,19 @@ public final class AlertDialog extends Stage {
          * sets the notification sound from custom file path and plays when stage is shown
          * <br>
          * <b>Note:</b> You need to add <b>javafx.media</b> dependency to use sounds
+         *
          * @param path custom file path
          * @return Builder
          */
         public Builder setSound(@NotNull String path) {
-            soundPath = path;
+            soundPath = Paths.get(path).toUri().toString();
 
             return this;
         }
 
         /**
          * creates AlertDialog
+         *
          * @return AlertDialog
          */
         public AlertDialog create() {
