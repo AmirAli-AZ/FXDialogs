@@ -320,7 +320,7 @@ after 2 seconds
     -fx-font-weight: bold;
 }
 
-#title {
+#message {
     -fx-font-size: 16px;
 }
 ```
