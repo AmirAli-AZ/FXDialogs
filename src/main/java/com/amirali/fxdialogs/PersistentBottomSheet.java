@@ -112,7 +112,7 @@ public class PersistentBottomSheet extends VBox {
      * show the bottom sheet with y-axis transition animation
      * @param duration duration of show animation
      */
-    public void show(Duration duration) {
+    public void show(@NotNull Duration duration) {
         var transition = new TranslateTransition(duration, this);
         transition.setFromY(getHeight());
         transition.setToY(0);
@@ -223,7 +223,7 @@ public class PersistentBottomSheet extends VBox {
      * sets the default duration of hide and show animations
      * @param duration default duration of hide and show animations
      */
-    public void setDuration(Duration duration) {
+    public void setDuration(@NotNull Duration duration) {
         this.duration = duration;
     }
 
@@ -239,7 +239,7 @@ public class PersistentBottomSheet extends VBox {
      * sets a callBack for bottom sheet states
      * @param callBack bottom sheet states callBack
      */
-    public void setCallBack(BottomSheetCallBack callBack) {
+    public void setCallBack(@NotNull BottomSheetCallBack callBack) {
         this.callBack = callBack;
     }
 

@@ -203,7 +203,7 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
          * @param styles dialog styles
          * @return Builder
          */
-        public Builder setStyles(@NotNull String... styles) {
+        public Builder setStyles(String... styles) {
             Collections.addAll(this.styles, styles);
 
             return this;

@@ -338,7 +338,7 @@ public final class AlertDialog extends Stage {
          * @param styles dialog styles
          * @return Builder
          */
-        public Builder addStyles(@NotNull String... styles) {
+        public Builder addStyles(String... styles) {
             Collections.addAll(this.styles, styles);
 
             return this;
