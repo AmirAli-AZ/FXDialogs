@@ -304,7 +304,7 @@ after 2 seconds
 </AnchorPane>
 ```
 
-- styles sheet
+- style sheet
 
 ```
 #root {
