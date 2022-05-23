@@ -15,7 +15,6 @@ var alert = new AlertDialog.Builder()
         .setDialogMessage("Message")
         .setPositiveButton("Ok", System.out::println)
         .create();
-alert.initModality(Modality.APPLICATION_MODAL);
 alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
@@ -36,7 +35,6 @@ var alert = new AlertDialog.Builder()
                 System.out.println(which + " checked");
             })
         .create();
-alert.initModality(Modality.APPLICATION_MODAL);
 alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
@@ -53,8 +51,7 @@ var alert = new AlertDialog.Builder()
         .setDialogMessage("Message")
         .setPositiveButton("Ok", System.out::println)
         .setSingleChoiceItems(new String[]{"A","B","C","D"}, 2, which -> System.out.println(which + "checked"))
-        .create(); 
-alert.initModality(Modality.APPLICATION_MODAL);
+        .create();
 alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
@@ -80,7 +77,6 @@ var alert = new AlertDialog.Builder()
         .setPositiveButton("Ok", which -> System.out.println(textField.getText()))
         .setNode(customNodeContainer)
         .create();
-alert.initModality(Modality.APPLICATION_MODAL);
 alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
@@ -98,7 +94,6 @@ var alert = new AlertDialog.Builder()
         .setPositiveButton("Ok", System.out::println)
         .setSound(Sounds.ChimesGlassy)
         .create();
-alert.initModality(Modality.APPLICATION_MODAL);
 alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
@@ -132,7 +127,6 @@ var progressDialog = new ProgressDialog.Builder()
         .setProgressType(ProgressDialog.ProgressBarType.Bar)
         .setProgress(.5)
         .create();
-progressDialog.initModality(Modality.APPLICATION_MODAL);
 progressDialog.setTitle(progressDialog.getDialogTitle());
 progressDialog.show();
 ```
