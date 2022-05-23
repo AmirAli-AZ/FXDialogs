@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.Modality;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;
@@ -55,6 +56,7 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("themes/default-exception-dialog-theme.css")).toExternalForm());
         else
             scene.getStylesheets().addAll(builder.styles);
+        initModality(Modality.APPLICATION_MODAL);
     }
 
     /**
@@ -129,7 +131,19 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
                         Objects.requireNonNull(getClass().getResourceAsStream("icons/ic_error_64.png"))
                 )
         );
-        private final ObjectProperty<Throwable> exceptionProperty = new SimpleObjectProperty<>();
+        private final ObjectProperty<Throwable> exceptionProperty = new SimpleObjectProperty<>() {
+            @Override
+            public void set(Throwable throwable) {
+                super.set(throwable);
+
+                var sw = new StringWriter();
+                var pw = new PrintWriter(sw);
+
+                throwable.printStackTrace(pw);
+
+                errorDetails.setText(sw.toString());
+            }
+        };
         private final StringProperty dialogMessageProperty = new SimpleStringProperty();
 
         /**
@@ -154,15 +168,6 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
 
             defaultHeader.setAlignment(Pos.CENTER_LEFT);
             defaultHeader.getChildren().addAll(errorIcon, defaultLabelMessage);
-
-            exceptionProperty.addListener((observableValue, oldValue, newValue) -> {
-                var sw = new StringWriter();
-                var pw = new PrintWriter(sw);
-
-                newValue.printStackTrace(pw);
-
-                errorDetails.setText(sw.toString());
-            });
         }
 
         /**

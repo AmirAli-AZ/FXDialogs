@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +49,7 @@ public final class AlertDialog extends Stage {
         }
         setScene(scene);
         setTitle(builder.title.getText());
+        initModality(Modality.APPLICATION_MODAL);
 
         // play audio when stage is shown
 
@@ -165,7 +167,33 @@ public final class AlertDialog extends Stage {
         private final List<String> styles = new ArrayList<>();
         private String soundPath;
         private AlertDialog dialog;
-        private final StringProperty dialogTitleProperty = new SimpleStringProperty(), dialogMessageProperty = new SimpleStringProperty();
+        private final StringProperty dialogTitleProperty = new SimpleStringProperty() {
+            @Override
+            public void set(String s) {
+                super.set(s);
+                if (!isTitleAdded) {
+                    top.getChildren().add(0, title);
+
+                    isTitleAdded = true;
+
+                    if (dialog != null)
+                        dialog.sizeToScene();
+                }
+            }
+        }, dialogMessageProperty = new SimpleStringProperty() {
+            @Override
+            public void set(String s) {
+                super.set(s);
+                if (!isMessageAdded) {
+                    top.getChildren().add(message);
+
+                    isMessageAdded = true;
+
+                    if (dialog != null)
+                        dialog.sizeToScene();
+                }
+            }
+        };
 
         /**
          * create initial layout
@@ -204,28 +232,6 @@ public final class AlertDialog extends Stage {
             container.setTop(top);
             container.setCenter(center);
             container.setBottom(buttons);
-
-            dialogTitleProperty.addListener((observableValue, oldValue, newValue) -> {
-                if (!isTitleAdded) {
-                    top.getChildren().add(0, this.title);
-
-                    isTitleAdded = true;
-
-                    if (dialog != null)
-                        dialog.sizeToScene();
-                }
-            });
-
-            dialogMessageProperty.addListener((observableValue, oldValue, newValue) -> {
-                if (!isMessageAdded) {
-                    top.getChildren().add(this.message);
-
-                    isMessageAdded = true;
-
-                    if (dialog != null)
-                        dialog.sizeToScene();
-                }
-            });
         }
 
         /**

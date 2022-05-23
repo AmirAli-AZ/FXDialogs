@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,6 +57,7 @@ public final class TimePickerDialog extends Stage {
             scene.getStylesheets().addAll(builder.styles);
         }
         setScene(scene);
+        initModality(Modality.APPLICATION_MODAL);
     }
 
     /**
@@ -117,7 +119,21 @@ public final class TimePickerDialog extends Stage {
         private int hours, minutes;
         private final List<String> styles = new ArrayList<>();
         private boolean init = true;
-        private final ObjectProperty<Time> timeProperty = new SimpleObjectProperty<>();
+        private final ObjectProperty<Time> timeProperty = new SimpleObjectProperty<>() {
+            @Override
+            public void set(Time time) {
+                super.set(time);
+                init = true;
+                hours = time.hours();
+                minutes = time.minutes();
+
+                hoursLabel.setText(String.valueOf(hours));
+                minutesLabel.setText(String.valueOf(minutes));
+
+                toggleGroup.selectToggle(time.am_pm() == Time.AM_PM.AM ? amButton : pmButton);
+                init = false;
+            }
+        };
 
         /**
          * creates initial layout
@@ -199,18 +215,6 @@ public final class TimePickerDialog extends Stage {
             toggleGroup.selectedToggleProperty().addListener((observableValue, oldToggle, newToggle) -> {
                 if (!init)
                     timeProperty.set(getResult());
-            });
-
-            timeProperty.addListener((observableValue, oldValue, newValue) -> {
-                init = true;
-                hours = newValue.hours();
-                minutes = newValue.minutes();
-
-                hoursLabel.setText(String.valueOf(hours));
-                minutesLabel.setText(String.valueOf(minutes));
-
-                toggleGroup.selectToggle(newValue.am_pm() == Time.AM_PM.AM ? amButton : pmButton);
-                init = false;
             });
 
             init = false;

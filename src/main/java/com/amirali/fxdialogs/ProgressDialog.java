@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,6 +48,7 @@ public final class ProgressDialog extends Stage {
             scene.getStylesheets().addAll(builder.styles);
         }
         setScene(scene);
+        initModality(Modality.APPLICATION_MODAL);
     }
 
     /**
@@ -147,7 +149,31 @@ public final class ProgressDialog extends Stage {
         // default progress type is Bar
         private ProgressBarType type = ProgressBarType.Bar;
         private final List<String> styles = new ArrayList<>();
-        private final StringProperty dialogTitleProperty = new SimpleStringProperty(), dialogMessageProperty = new SimpleStringProperty();
+        private final StringProperty dialogTitleProperty = new SimpleStringProperty() {
+            @Override
+            public void set(String s) {
+                super.set(s);
+                if (!isTitleAdded) {
+                    top.getChildren().add(0, title);
+                    isTitleAdded = true;
+
+                    if (progressDialog != null)
+                        progressDialog.sizeToScene();
+                }
+            }
+        }, dialogMessageProperty = new SimpleStringProperty() {
+            @Override
+            public void set(String s) {
+                super.set(s);
+                if (!isMessageAdded) {
+                    top.getChildren().add(message);
+                    isMessageAdded = true;
+
+                    if (progressDialog != null)
+                        progressDialog.sizeToScene();
+                }
+            }
+        };
         private final DoubleProperty progressProperty = new SimpleDoubleProperty();
         private ProgressDialog progressDialog;
 
@@ -174,26 +200,6 @@ public final class ProgressDialog extends Stage {
             progressIndicator.progressProperty().bind(progressProperty);
             container.setCenter(center);
             container.setTop(top);
-
-            dialogTitleProperty.addListener((observableValue, oldValue, newValue) -> {
-                if (!isTitleAdded) {
-                    top.getChildren().add(0, title);
-                    isTitleAdded = true;
-
-                    if (progressDialog != null)
-                        progressDialog.sizeToScene();
-                }
-            });
-
-            dialogMessageProperty.addListener((observableValue, oldValue, newValue) -> {
-                if (!isMessageAdded) {
-                    top.getChildren().add(message);
-                    isMessageAdded = true;
-
-                    if (progressDialog != null)
-                        progressDialog.sizeToScene();
-                }
-            });
         }
 
         /**
