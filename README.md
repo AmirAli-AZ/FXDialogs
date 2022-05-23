@@ -9,6 +9,8 @@ This is a library to create AlertDialog , ProgressDialog and etc...
 <details>
 <summary>AlertDialog</summary>
 
+<p>
+
 ```java
 var alert = new AlertDialog.Builder()
         .setDialogTitle("Title")
@@ -18,12 +20,15 @@ var alert = new AlertDialog.Builder()
 alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
+</p>
 
 <img src="images/alert-dialog-demo-1.png" alt="AlertDialog">
 </details>
 
 <details>
 <summary>MultiChoiceAlertDialog</summary>
+
+<p>
 
 ```java
 var alert = new AlertDialog.Builder()
@@ -38,6 +43,7 @@ var alert = new AlertDialog.Builder()
 alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
+</p>
 
 <img src="images/alert-dialog-demo-2.png" alt="MultiChoiceAlertDialog">
 </details>
@@ -45,6 +51,7 @@ alert.show();
 <details>
 <summary>SingleChoiceAlertDialog</summary>
 
+<p>
 ```java
 var alert = new AlertDialog.Builder()
         .setDialogTitle("Title")
@@ -55,12 +62,15 @@ var alert = new AlertDialog.Builder()
 alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
+</p>
 
 <img src="images/alert-diaog-demo-3.png" alt="SingleChoiceAlertDialog">
 </details>
 
 <details>
 <summary>CustomAlertDialog</summary>
+
+<p>
 
 ```java
 var customNodeContainer = new HBox();
@@ -80,12 +90,15 @@ var alert = new AlertDialog.Builder()
 alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
+</p>
 
 <img src="images/alert-dialog-demo-4.png" alt="CustomAlertDialog">
 </details>
 
 <details>
 <summary>AlertDialogWithSound</summary>
+
+<p>
 
 ```java
 var alert = new AlertDialog.Builder()   
@@ -97,13 +110,17 @@ var alert = new AlertDialog.Builder()
 alert.setTitle(alert.getDialogTitle());
 alert.show();
 ```
-
 Note : you should add javafx.media dependency when you want to use sounds
+
+</p>
+
 </details>
 
 
 <details>
 <summary>TimePickerDialog</summary>
+
+<p>
 
 ```java
 var timePickerDialog = new TimePickerDialog.Builder()
@@ -114,11 +131,15 @@ timePickerDialog.showAndWait();
 System.out.println(timePickerDialog.getTime().toString());
 ```
 
+</p>
+
 <img src="images/timepicker-dialog-demo.png" alt="TimePickerDialog">
 </details>
 
 <details>
 <summary>ProgressDialog</summary>
+
+<p>
 
 ```java
 var progressDialog = new ProgressDialog.Builder()
@@ -131,11 +152,15 @@ progressDialog.setTitle(progressDialog.getDialogTitle());
 progressDialog.show();
 ```
 
+</p>
+
 <img src="images/progress-dialog-demo.png" alt="ProgressDialog">
 </details>
 
 <details>
 <summary>ExceptionDialog</summary>
+
+<p>
 
 ```java
 try {
@@ -149,11 +174,15 @@ try {
 }
 ```
 
+</p>
+
 <img src="images/exception-dialog-demo.png" alt="ExceptionDialog">
 </details>
 
 <details>
 <summary>PersistentBottomSheet</summary>
+
+<p>
 
 ```java
 var root = new BorderPane();
@@ -212,6 +241,7 @@ persistentBottomSheet.setCallBack(new BottomSheetCallBack() {
     }
 });
 ```
+</p>
 
 <img src="images/persistent-bottom-sheet-demo-1.png" alt="PersistentBottomSheetDemo">
 <img src="images/persistent-bottom-sheet-demo-2.png" alt="PersistentBottomSheetDemo">
@@ -220,6 +250,8 @@ persistentBottomSheet.setCallBack(new BottomSheetCallBack() {
 
 <details>
 <summary>SplashScreen</summary>
+
+<p>
 
 ```java
 import javafx.application.Application;
@@ -269,15 +301,19 @@ public class Main extends Application {
 }
 ```
 
+</p>
+
 <img src="images/splashscreen-demo-1.png" alt="SplashScreenDemo">
 
-after 2 seconds
+<p>after 2 seconds</p>
 
 <img src="images/splashscreen-demo-2.png" alt="SplashScreenDemo">
 </details>
 
 <details>
 <summary>PopupNotification</summary>
+
+<p>
 
 - create notification layout (of course you can set controller)
 
@@ -335,8 +371,9 @@ try {
     e.printStackTrace();
 }
 ```
+</p>
 
-result :
+<p>result :</p>
 
 <img src="images/notification-demo.png" alt="notification demo">
 
