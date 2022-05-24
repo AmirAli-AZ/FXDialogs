@@ -52,6 +52,7 @@ alert.show();
 <summary>SingleChoiceAlertDialog</summary>
 
 <p>
+
 ```java
 var alert = new AlertDialog.Builder()
         .setDialogTitle("Title")

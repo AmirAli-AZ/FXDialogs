@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavadocGenerationManager">
-    <option name="OUTPUT_DIRECTORY" value="$USER_HOME$/Documents/FXDialogs Docs" />
+    <option name="OUTPUT_DIRECTORY" value="$USER_HOME$/VSC workspace/FXDialogsWebsite/javadocs" />
     <option name="OPTION_SCOPE" value="package" />
     <option name="LOCALE" value="US" />
     <option name="OPEN_IN_BROWSER" value="false" />
