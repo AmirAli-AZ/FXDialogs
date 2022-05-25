@@ -1,13 +1,17 @@
 package com.amirali.fxdialogs;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.media.AudioClip;
 import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Paths;
@@ -21,7 +25,27 @@ public class PopupNotification extends Popup {
 
     private NotificationPosition position = NotificationPosition.BOTTOM_RIGHT;
     private final ObjectProperty<Insets> marginProperty = new SimpleObjectProperty<>(new Insets(0));
+    private final ObjectProperty<Duration> durationProperty = new SimpleObjectProperty<>();
     private String soundPath;
+    private final EventHandler<WindowEvent> shownEvent = windowEvent -> {
+
+        if (soundPath != null) {
+            var player = new AudioClip(soundPath);
+            player.play();
+        }
+        calculatePosition(position, marginProperty.get());
+        marginProperty.addListener((observableValue, oldValue, newValue) -> calculatePosition(position, newValue));
+
+        if (durationProperty.get() != null) {
+            var timeline = new Timeline(new KeyFrame(durationProperty.get()));
+            timeline.setCycleCount(1);
+            timeline.setOnFinished(event -> {
+                if (isShowing())
+                    hide();
+            });
+            timeline.play();
+        }
+    };
 
     /**
      * initial notification
@@ -30,15 +54,19 @@ public class PopupNotification extends Popup {
      */
     public PopupNotification(Node... nodes) {
         getContent().addAll(nodes);
+        addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
+    }
 
-        addEventHandler(WindowEvent.WINDOW_SHOWN, windowEvent -> {
-            if (soundPath != null) {
-                var player = new AudioClip(soundPath);
-                player.play();
-            }
-            calculatePosition(position, marginProperty.get());
-            marginProperty.addListener((observableValue, oldValue, newValue) -> calculatePosition(position, newValue));
-        });
+    /**
+     * initial notification
+     *
+     * @param nodes content of the notification
+     * @param duration display duration
+     */
+    public PopupNotification(@NotNull Duration duration, Node... nodes) {
+        getContent().addAll(nodes);
+        durationProperty.set(duration);
+        addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
     }
 
     private void calculatePosition(@NotNull NotificationPosition position, @NotNull Insets margin) {
@@ -133,5 +161,32 @@ public class PopupNotification extends Popup {
      */
     public void setSound(@NotNull String path) {
         soundPath = Paths.get(path).toUri().toString();
+    }
+
+    /**
+     * sets the notification display duration
+     *
+     * @param duration display duration
+     */
+    public void setDuration(@NotNull Duration duration) {
+        durationProperty.set(duration);
+    }
+
+    /**
+     * notification display duration
+     *
+     * @return Duration
+     */
+    public Duration getDuration() {
+        return durationProperty.get();
+    }
+
+    /**
+     * notification display duration as a property
+     *
+     * @return ObjectProperty
+     */
+    public ObjectProperty<Duration> durationProperty() {
+        return durationProperty;
     }
 }

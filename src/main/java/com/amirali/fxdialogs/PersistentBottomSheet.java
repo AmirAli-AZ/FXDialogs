@@ -21,15 +21,26 @@ import java.util.Objects;
 
 public class PersistentBottomSheet extends VBox {
 
-    private final BooleanProperty showingProperty = new SimpleBooleanProperty(true);
+    private final BooleanProperty showingProperty = new SimpleBooleanProperty(true) {
+        @Override
+        public void set(boolean b) {
+            super.set(b);
+            if (!performingShowHide) {
+                if (b)
+                    show();
+                else
+                    hide();
+            }
+        }
+    };
     private final ObjectProperty<Image> dragHandlerImageProperty = new SimpleObjectProperty<>(
             new Image(
                     Objects.requireNonNull(getClass().getResourceAsStream("icons/round_horizontal_rule_black_24dp.png"))
             )
     );
+    private final ObjectProperty<Duration> durationProperty = new SimpleObjectProperty<>(Duration.seconds(1));
     private boolean performingShowHide, firstMouseDrag;
     private double originalHeight, previousHeight;
-    private Duration duration = Duration.seconds(1);
     private BottomSheetCallBack callBack;
 
     /**
@@ -54,33 +65,17 @@ public class PersistentBottomSheet extends VBox {
     public static final int SHOWN = 451;
 
     /**
-     * sets a listener of the showing property
+     * default constructor
      */
     public PersistentBottomSheet() {
-        showingProperty.addListener((observableValue, oldValue, newValue) -> {
-            if (!performingShowHide) {
-                if (newValue)
-                    show();
-                else
-                    hide();
-            }
-        });
+
     }
 
     /**
-     * sets a listener of the showing property
      * @param spacing vbox spacing between nodes
      */
     public PersistentBottomSheet(double spacing) {
         super(spacing);
-        showingProperty.addListener((observableValue, oldValue, newValue) -> {
-            if (!performingShowHide) {
-                if (newValue)
-                    show();
-                else
-                    hide();
-            }
-        });
     }
 
     /**
@@ -105,7 +100,7 @@ public class PersistentBottomSheet extends VBox {
      * hide the bottom sheet with y-axis transition animation and given duration in setDuration(Duration duration)
      */
     public void hide() {
-        hide(duration);
+        hide(durationProperty.get());
     }
 
     /**
@@ -131,7 +126,7 @@ public class PersistentBottomSheet extends VBox {
      * show the bottom sheet with y-axis transition animation and given duration in setDuration(Duration duration)
      */
     public void show() {
-        show(duration);
+        show(durationProperty.get());
     }
 
     /**
@@ -224,7 +219,7 @@ public class PersistentBottomSheet extends VBox {
      * @param duration default duration of hide and show animations
      */
     public void setDuration(@NotNull Duration duration) {
-        this.duration = duration;
+        durationProperty.set(duration);
     }
 
     /**
@@ -232,7 +227,16 @@ public class PersistentBottomSheet extends VBox {
      * @return Duration
      */
     public Duration getDuration() {
-        return duration;
+        return durationProperty.get();
+    }
+
+    /**
+     * default show and hide animations duration as a property
+     *
+     * @return ObjectProperty
+     */
+    public ObjectProperty<Duration> durationProperty() {
+        return durationProperty;
     }
 
     /**
