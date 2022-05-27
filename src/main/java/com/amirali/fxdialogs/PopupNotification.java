@@ -3,6 +3,7 @@ package com.amirali.fxdialogs;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -25,8 +26,21 @@ public class PopupNotification extends Popup {
 
     private NotificationPosition position = NotificationPosition.BOTTOM_RIGHT;
     private final ObjectProperty<Insets> marginProperty = new SimpleObjectProperty<>(new Insets(0));
-    private final ObjectProperty<Duration> durationProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Duration> durationProperty = new SimpleObjectProperty<>(Duration.ZERO) {
+        @Override
+        public void set(Duration duration) {
+            super.set(duration);
+            timeline = new Timeline(new KeyFrame(duration));
+            timeline.setCycleCount(1);
+            timeline.setOnFinished(event -> {
+                if (isShowing())
+                    hide();
+            });
+            currentTimeProperty.bind(timeline.currentTimeProperty());
+        }
+    }, currentTimeProperty = new SimpleObjectProperty<>(Duration.ZERO);
     private String soundPath;
+    private Timeline timeline;
     private final EventHandler<WindowEvent> shownEvent = windowEvent -> {
 
         if (soundPath != null) {
@@ -36,15 +50,12 @@ public class PopupNotification extends Popup {
         calculatePosition(position, marginProperty.get());
         marginProperty.addListener((observableValue, oldValue, newValue) -> calculatePosition(position, newValue));
 
-        if (durationProperty.get() != null) {
-            var timeline = new Timeline(new KeyFrame(durationProperty.get()));
-            timeline.setCycleCount(1);
-            timeline.setOnFinished(event -> {
-                if (isShowing())
-                    hide();
-            });
+        if (timeline != null)
             timeline.play();
-        }
+
+    }, hiddenEvent = windowEvent -> {
+        if (timeline != null && currentTimeProperty.get().lessThan(durationProperty.get()))
+            timeline.stop();
     };
 
     /**
@@ -55,6 +66,7 @@ public class PopupNotification extends Popup {
     public PopupNotification(Node... nodes) {
         getContent().addAll(nodes);
         addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
+        addEventHandler(WindowEvent.WINDOW_HIDDEN, hiddenEvent);
     }
 
     /**
@@ -67,6 +79,7 @@ public class PopupNotification extends Popup {
         getContent().addAll(nodes);
         durationProperty.set(duration);
         addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
+        addEventHandler(WindowEvent.WINDOW_HIDDEN, hiddenEvent);
     }
 
     private void calculatePosition(@NotNull NotificationPosition position, @NotNull Insets margin) {
@@ -188,5 +201,27 @@ public class PopupNotification extends Popup {
      */
     public ObjectProperty<Duration> durationProperty() {
         return durationProperty;
+    }
+
+    /**
+     * elapsed duration of the total duration
+     * <br>
+     * returns zero value if timer isn't started yet
+     *
+     * @return Duration
+     */
+    public Duration getCurrentTime() {
+        return currentTimeProperty.get();
+    }
+
+    /**
+     * elapsed duration of the total duration as a read only property
+     * <br>
+     * returns zero value if timer isn't started yet
+     *
+     * @return ReadOnlyObjectProperty
+     */
+    public ReadOnlyObjectProperty<Duration> currentTimeProperty() {
+        return currentTimeProperty;
     }
 }

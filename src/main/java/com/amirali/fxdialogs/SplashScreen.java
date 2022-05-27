@@ -24,6 +24,17 @@ import java.util.List;
 public final class SplashScreen extends Stage {
 
     private final Builder builder;
+    private final ObjectProperty<Duration> durationProperty = new SimpleObjectProperty<>(Duration.ZERO) {
+        @Override
+        public void set(Duration duration) {
+            super.set(duration);
+            timeline = new Timeline(new KeyFrame(duration));
+            timeline.setCycleCount(1);
+            timeline.setOnFinished(event -> closeSplash());
+            currentTimeProperty.bind(timeline.currentTimeProperty());
+        }
+    }, currentTimeProperty = new SimpleObjectProperty<>(Duration.ZERO);
+    private Timeline timeline;
 
     /**
      * @param builder SplashScreen builder
@@ -48,48 +59,72 @@ public final class SplashScreen extends Stage {
             throw new NullPointerException("container or scene cannot be null");
         }
 
+        durationProperty.set(builder.duration);
+
         addEventHandler(WindowEvent.WINDOW_SHOWN, windowEvent -> {
-            builder.timeline.play();
+            if (timeline != null)
+                timeline.play();
+
             if (builder.callBack != null)
                 builder.callBack.onStarted();
         });
+
+        addEventHandler(WindowEvent.WINDOW_HIDDEN, windowEvent -> {
+            if (timeline != null && currentTimeProperty.get().lessThan(durationProperty.get())) {
+                timeline.stop();
+                closeSplash();
+            }
+        });
+    }
+
+    private void closeSplash() {
+        if (builder.primaryStage.isShowing())
+            throw new IllegalStateException("Cannot show the SplashScreen once primaryStage has been set visible");
+
+        builder.primaryStage.show();
+
+        if (isShowing())
+            close();
+
+        if (builder.callBack != null)
+            builder.callBack.onFinished();
     }
 
     /**
-     * elapsed time of the total time
+     * elapsed duration of the total duration
      *
      * @return Duration
      */
     public Duration getCurrentTime() {
-        return builder.timeline.getCurrentTime();
+        return currentTimeProperty.get();
     }
 
     /**
-     * elapsed time of the total time as a read only property
+     * elapsed duration of the total duration as a read only property
      *
      * @return ReadOnlyObjectProperty
      */
     public ReadOnlyObjectProperty<Duration> currentTimeProperty() {
-        return builder.timeline.currentTimeProperty();
+        return currentTimeProperty;
     }
 
     /**
-     * total time
+     * SplashScreen display duration
      *
      * @return Duration
      */
-    public Duration getTotalTime() {
-        return builder.totalTimeProperty.get();
+    public Duration getDuration() {
+        return durationProperty.get();
     }
 
 
     /**
-     * total time as a read only property
+     * SplashScreen display duration as a property
      *
-     * @return ReadOnlyObjectProperty
+     * @return ObjectProperty
      */
-    public ReadOnlyObjectProperty<Duration> totalTimeProperty() {
-        return builder.totalTimeProperty;
+    public ObjectProperty<Duration> durationProperty() {
+        return durationProperty;
     }
 
     /**
@@ -98,13 +133,11 @@ public final class SplashScreen extends Stage {
     public static class Builder {
 
         private final List<String> styles = new ArrayList<>();
-        private final Timeline timeline;
-        private final ObjectProperty<Duration> totalTimeProperty;
+        private final Duration duration;
         private Parent container;
         private SplashScreenCallBack callBack;
         private Scene scene;
-
-        private SplashScreen splashScreen;
+        private final Stage primaryStage;
 
         /**
          * initial SplashScreen
@@ -114,24 +147,11 @@ public final class SplashScreen extends Stage {
          * @throws IllegalStateException Cannot show the SplashScreen once primaryStage has been set visible
          */
         public Builder(@NotNull Duration duration, @NotNull Stage primaryStage) {
-            totalTimeProperty = new SimpleObjectProperty<>(duration);
-
             if (primaryStage.isShowing())
                 throw new IllegalStateException("Cannot show the SplashScreen once primaryStage has been set visible");
 
-            var keyFrame = new KeyFrame(duration);
-            timeline = new Timeline(keyFrame);
-            timeline.setCycleCount(1);
-            timeline.setOnFinished(event -> {
-                if (primaryStage.isShowing())
-                    throw new IllegalStateException("Cannot show the SplashScreen once primaryStage has been set visible");
-
-                if (splashScreen != null)
-                    splashScreen.close();
-                primaryStage.show();
-                if (callBack != null)
-                    callBack.onFinished();
-            });
+            this.duration = duration;
+            this.primaryStage = primaryStage;
         }
 
         /**
@@ -188,8 +208,7 @@ public final class SplashScreen extends Stage {
          * @return SplashScreenWindow
          */
         public SplashScreen create() {
-            splashScreen = new SplashScreen(this);
-            return splashScreen;
+            return new SplashScreen(this);
         }
     }
 }

@@ -364,7 +364,7 @@ public class Main extends Application {
 try {
     var loader = new FXMLLoader(getClass().getResource("notification-view.fxml"));
 
-    var notification = new PopupNotification(((AnchorPane) loader.load()));
+    var notification = new PopupNotification(Duration.seconds(2), ((AnchorPane) loader.load()));
     notification.setSound(Sounds.Succeeded);
     notification.setAutoHide(true);
     notification.show(primaryStage);
