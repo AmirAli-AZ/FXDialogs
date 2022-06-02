@@ -380,6 +380,43 @@ try {
 
 </details>
 
+<details>
+<summary>TrayIcon</summary>
+
+<p>
+
+```java
+if (SystemTray.isSupported()) {
+    Platform.setImplicitExit(false);
+            
+    var menu = new ContextMenu();
+    var exitItem = new MenuItem("Exit Application");
+    exitItem.setOnAction(event -> {
+        Platform.exit();
+        System.exit(0);
+    });
+
+    menu.getItems().add(exitItem);
+
+    var trayIcon = new FXTrayIcon(
+            Toolkit.getDefaultToolkit().getImage(getClass().getResource("fxdialogs.png")),
+        "Demo FXTrayIcon",
+        menu
+    );
+
+    var tray = SystemTray.getSystemTray();
+    tray.add(trayIcon);
+}
+```
+
+</p>
+
+<p>result: </p>
+
+<img src="images/tray-icon-demo.png" alt="tray icon demo">
+
+</details>
+
 ### Styling
 
 You can use `.setStyles(String... styles)` to add custom css styles to dialog
