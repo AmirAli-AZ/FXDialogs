@@ -15,7 +15,7 @@ import java.awt.event.MouseEvent;
 /**
  * @author Amir Ali
  *
- * FXTrayIcon by XDSSWAR
+ * Inspired by XDSSWAR NiceTrayIcon
  */
 
 public class FXTrayIcon extends TrayIcon {
