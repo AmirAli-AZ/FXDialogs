@@ -1,11 +1,11 @@
 ## FXDialogs
 
 <br>
-<p align=center>
+<div align=center>
   <img src="https://raw.githubusercontent.com/AmirAli-AZ/FXDialogsWebsite/master/favicon.svg" width=250 alt="icon">
   <br>
   <a href="https://amirali-az.github.io/FXDialogsWebsite/">FXDialogs</a>
-</p>
+</div>
 
 ### What is this?
 
