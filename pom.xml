@@ -6,7 +6,7 @@
 
     <groupId>com.amirali</groupId>
     <artifactId>FXDialogs</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <name>FXDialogs</name>
 
     <properties>
