@@ -1,5 +1,14 @@
 ## FXDialogs
 
+<br>
+<div align=center>
+  <img src="https://raw.githubusercontent.com/AmirAli-AZ/FXDialogsWebsite/master/favicon.svg" width=250 alt="icon">
+  <br>
+  <a href="https://amirali-az.github.io/FXDialogsWebsite/">FXDialogs</a>
+</div>
+
+### What is this?
+
 This is a library to create AlertDialog , ProgressDialog and etc...
 
 ### Examples
