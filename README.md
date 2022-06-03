@@ -1,9 +1,8 @@
 ## FXDialogs
 
 <br>
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/83538916/171732489-61aec01c-dc42-40ab-a7a5-f9b4bb4d5423.png"
- width=250>
+<p align=center>
+  <img src="https://raw.githubusercontent.com/AmirAli-AZ/FXDialogsWebsite/master/favicon.svg" width=250 alt="icon">
   </br>
   <a href="https://amirali-az.github.io/FXDialogsWebsite/">FXDialogs</a>
 </p>
