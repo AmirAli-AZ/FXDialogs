@@ -1,6 +1,7 @@
 package com.amirali.fxdialogs;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.layout.StackPane;
@@ -21,6 +22,7 @@ import java.awt.event.MouseEvent;
 public class FXTrayIcon extends TrayIcon {
 
     private ContextMenu menu;
+    private Stage iconStage;
 
     /**
      * initial FXTrayIcon
@@ -78,7 +80,7 @@ public class FXTrayIcon extends TrayIcon {
         if (menu != null && menu.getItems().size() > 0) {
             menu.setAutoHide(true);
 
-            var iconStage = new Stage();
+            iconStage = new Stage();
             iconStage.initStyle(StageStyle.UTILITY);
             iconStage.setWidth(0);
             iconStage.setHeight(0);
@@ -97,5 +99,17 @@ public class FXTrayIcon extends TrayIcon {
                 }
             });
         }
+    }
+
+    /**
+     * stylesheets of the context menu owner window
+     *
+     * @throws NullPointerException context menu is null or empty
+     * @return ObservableList
+     */
+    public ObservableList<String> getStylesheets() {
+        if (iconStage != null)
+            return iconStage.getScene().getStylesheets();
+        throw new NullPointerException("context menu is null or empty");
     }
 }
