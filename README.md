@@ -426,6 +426,21 @@ if (SystemTray.isSupported()) {
 
 </details>
 
+<details>
+<summary>SimplePopupNotification</summary>
+
+<p>
+
+```java
+var notification = new SimplePopupNotification(Duration.seconds(2), "SimplePopupNotification", "This is a simple popup notification");
+notification.show(primaryStage);
+```
+</p>
+
+<img src="images/simple-popup-notification-demo.png" alt="simple popup notification demo">
+
+</details>
+
 ### Styling
 
 You can use `.setStyles(String... styles)` to add custom css styles to dialog
