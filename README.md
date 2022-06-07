@@ -1,3 +1,5 @@
+![License - Apache 2.0](https://img.shields.io/github/license/AmirAli-AZ/FXDialogs?style=plastic)
+
 ## FXDialogs
 
 <br>
