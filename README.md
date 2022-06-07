@@ -1,10 +1,14 @@
-![License - Apache 2.0](https://img.shields.io/github/license/AmirAli-AZ/FXDialogs?style=plastic)
+<div align=center>
+  <img alt="GitHub tag (latest by date)" src="https://img.shields.io/github/v/tag/AmirAli-AZ/FXDialogs?style=flat-square">
+  <img alt="GitHub license" src="https://img.shields.io/github/license/AmirAli-AZ/FXDialogs?style=flat-square">
+  <img alt="java version 17+" src="https://img.shields.io/badge/Java%20version-17%2B-yellowgreen?style=flat-square">
+</div>
 
 ## FXDialogs
 
 <br>
 <div align=center>
-  <img src="https://raw.githubusercontent.com/AmirAli-AZ/FXDialogsWebsite/master/favicon.svg" width=250 alt="icon">
+  <img src="https://raw.githubusercontent.com/AmirAli-AZ/FXDialogsWebsite/master/favicon.svg" width="200px" alt="icon">
   <br>
   <a href="https://amirali-az.github.io/FXDialogsWebsite/">FXDialogs</a>
 </div>
