@@ -378,6 +378,8 @@ try {
     var notification = new PopupNotification(Duration.seconds(2), ((AnchorPane) loader.load()));
     notification.setSound(Sounds.Succeeded);
     notification.setAutoHide(true);
+    // be sure to always choose a unique id for every notification
+    notification.setId(UUID.randomUUID().toString());
     notification.show(primaryStage);
 }catch (IOException e) {
     e.printStackTrace();
@@ -435,6 +437,8 @@ if (SystemTray.isSupported()) {
 
 ```java
 var notification = new SimplePopupNotification(Duration.seconds(2), "SimplePopupNotification", "This is a simple popup notification");
+// be sure to always choose a unique id for every notification
+notification.setId(UUID.randomUUID().toString());
 notification.show(primaryStage);
 ```
 </p>

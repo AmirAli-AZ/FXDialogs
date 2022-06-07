@@ -16,6 +16,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * @author Amir Ali
+ */
+
 public class SimplePopupNotification extends PopupNotification {
 
     private final StringProperty titleProperty = new SimpleStringProperty(), messageProperty = new SimpleStringProperty();

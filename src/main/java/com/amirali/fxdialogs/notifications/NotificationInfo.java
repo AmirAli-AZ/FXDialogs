@@ -1,11 +1,13 @@
 package com.amirali.fxdialogs.notifications;
 
+import org.jetbrains.annotations.NotNull;
+
 class NotificationInfo {
     private String id;
     private NotificationPosition position;
     private double height;
 
-    public NotificationInfo(NotificationPosition position, double height, String id) {
+    public NotificationInfo(@NotNull NotificationPosition position, double height, @NotNull String id) {
         this.position = position;
         this.height = height;
         this.id = id;
@@ -15,7 +17,7 @@ class NotificationInfo {
         return position;
     }
 
-    public void setPosition(NotificationPosition position) {
+    public void setPosition(@NotNull NotificationPosition position) {
         this.position = position;
     }
 
@@ -31,7 +33,7 @@ class NotificationInfo {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(@NotNull String id) {
         this.id = id;
     }
 }
