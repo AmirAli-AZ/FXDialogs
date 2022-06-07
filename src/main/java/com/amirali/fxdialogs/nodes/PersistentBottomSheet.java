@@ -1,4 +1,4 @@
-package com.amirali.fxdialogs;
+package com.amirali.fxdialogs.nodes;
 
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;
@@ -35,7 +35,7 @@ public class PersistentBottomSheet extends VBox {
     };
     private final ObjectProperty<Image> dragHandlerImageProperty = new SimpleObjectProperty<>(
             new Image(
-                    Objects.requireNonNull(getClass().getResourceAsStream("icons/round_horizontal_rule_black_24dp.png"))
+                    Objects.requireNonNull(getClass().getResourceAsStream("/com/amirali/fxdialogs/icons/round_horizontal_rule_black_24dp.png"))
             )
     );
     private final ObjectProperty<Duration> durationProperty = new SimpleObjectProperty<>(Duration.seconds(1));

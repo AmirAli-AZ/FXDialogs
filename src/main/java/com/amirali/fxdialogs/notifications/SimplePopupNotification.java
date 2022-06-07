@@ -1,5 +1,6 @@
-package com.amirali.fxdialogs;
+package com.amirali.fxdialogs.notifications;
 
+import com.amirali.fxdialogs.notifications.PopupNotification;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,7 +19,7 @@ import java.util.Objects;
 public class SimplePopupNotification extends PopupNotification {
 
     private final StringProperty titleProperty = new SimpleStringProperty(), messageProperty = new SimpleStringProperty();
-    private final ObjectProperty<Image> closeImageProperty = new SimpleObjectProperty<>(new Image(Objects.requireNonNull(getClass().getResourceAsStream("icons/round_close_black_24dp.png"))));
+    private final ObjectProperty<Image> closeImageProperty = new SimpleObjectProperty<>(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/amirali/fxdialogs/icons/round_close_black_24dp.png"))));
     private final VBox container = new VBox(5);
 
     /**
@@ -147,7 +148,7 @@ public class SimplePopupNotification extends PopupNotification {
 
         container.setPrefSize(320, 150);
         container.getStylesheets().add(
-                Objects.requireNonNull(getClass().getResource("themes/default-simple-popup-notification-theme.css")).toExternalForm()
+                Objects.requireNonNull(getClass().getResource("/com/amirali/fxdialogs/themes/default-simple-popup-notification-theme.css")).toExternalForm()
         );
 
         title.textProperty().bind(titleProperty);

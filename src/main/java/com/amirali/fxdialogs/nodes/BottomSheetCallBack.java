@@ -1,4 +1,4 @@
-package com.amirali.fxdialogs;
+package com.amirali.fxdialogs.nodes;
 
 /**
  * @author Amir Ali
