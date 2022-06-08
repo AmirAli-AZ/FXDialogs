@@ -8,6 +8,6 @@
 
 ## Screenshots
 
-| Original                    | Updated                     |
-| --------------------------- | --------------------------- |
-| **original screen shot**    | **Updated screen shot**     |
+| Original                 | Updated                 |
+|--------------------------|-------------------------|
+| **original screen shot** | **Updated screen shot** |
