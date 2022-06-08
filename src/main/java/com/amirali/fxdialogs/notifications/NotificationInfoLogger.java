@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ final class NotificationInfoLogger {
         var gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
-        if (file.exists()) {
+        if (Files.exists(file.toPath())) {
             var reader = new FileReader(file);
             var data = gson.fromJson(reader, NotificationInfo[].class);
             reader.close();
@@ -55,7 +56,7 @@ final class NotificationInfoLogger {
      */
     public static void removeIf(@NotNull NotificationInfo info) throws IOException {
         var file = getFile();
-        if (file.exists()) {
+        if (Files.exists(file.toPath())) {
             var gson = new GsonBuilder()
                     .setPrettyPrinting()
                     .create();
@@ -81,7 +82,7 @@ final class NotificationInfoLogger {
      */
     public static List<NotificationInfo> getNotificationsInfo() throws IOException {
         var file = getFile();
-        if (file.exists()) {
+        if (Files.exists(file.toPath())) {
             var gson = new Gson();
             var reader = new FileReader(file);
             var data = gson.fromJson(reader, NotificationInfo[].class);
@@ -92,7 +93,7 @@ final class NotificationInfoLogger {
         return new ArrayList<>();
     }
 
-    private static File getFile() {
+    private static File getFile() throws IOException {
         var file = new File(
                 System.getProperty("user.home") +
                         File.separator +
@@ -100,8 +101,12 @@ final class NotificationInfoLogger {
                         File.separator +
                         "notification-logs.json"
         );
-        if (!file.getParentFile().exists())
-            file.getParentFile().mkdirs();
+        var parent = file.getParentFile();
+
+        if (!Files.exists(parent.toPath())) {
+            Files.createDirectories(parent.toPath());
+            Files.setAttribute(parent.toPath(), "dos:hidden", true);
+        }
 
         return file;
     }

@@ -25,6 +25,8 @@ import java.util.Objects;
 public class PopupNotification extends Popup {
 
     private NotificationPosition position = NotificationPosition.BOTTOM_RIGHT;
+    private String soundPath;
+    private Timeline timeline;
     private final ObjectProperty<Insets> marginProperty = new SimpleObjectProperty<>(new Insets(0));
     private final ObjectProperty<Duration> durationProperty = new SimpleObjectProperty<>(Duration.ZERO) {
         @Override
@@ -40,16 +42,14 @@ public class PopupNotification extends Popup {
         }
     }, currentTimeProperty = new SimpleObjectProperty<>(Duration.ZERO);
     private final StringProperty idProperty = new SimpleStringProperty();
-    private String soundPath;
-    private Timeline timeline;
     private final EventHandler<WindowEvent> shownEvent = windowEvent -> {
 
         if (soundPath != null) {
             var player = new AudioClip(soundPath);
             player.play();
         }
-        calculatePosition(position, marginProperty.get());
-        marginProperty.addListener((observableValue, oldValue, newValue) -> calculatePosition(position, newValue));
+        applyPosition(position, marginProperty.get());
+        marginProperty.addListener((observableValue, oldValue, newValue) -> applyPosition(position, newValue));
 
         if (timeline != null)
             timeline.play();
@@ -93,7 +93,7 @@ public class PopupNotification extends Popup {
         addEventHandler(WindowEvent.WINDOW_HIDDEN, hiddenEvent);
     }
 
-    private void calculatePosition(@NotNull NotificationPosition position, @NotNull Insets margin) {
+    private void applyPosition(@NotNull NotificationPosition position, @NotNull Insets margin) {
         var visualBounds = Screen.getPrimary().getVisualBounds();
         var notificationsHeight = 0.0;
         try {
