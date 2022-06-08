@@ -1,16 +1,21 @@
 package com.amirali.fxdialogs.notifications;
 
-import com.amirali.fxdialogs.notifications.PopupNotification;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +30,12 @@ public class SimplePopupNotification extends PopupNotification {
     private final StringProperty titleProperty = new SimpleStringProperty(), messageProperty = new SimpleStringProperty();
     private final ObjectProperty<Image> closeImageProperty = new SimpleObjectProperty<>(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/amirali/fxdialogs/icons/round_close_black_24dp.png"))));
     private final VBox container = new VBox(5);
+    private final ImageView icon = new ImageView();
+    private final EventHandler<WindowEvent> shownEvent = window_shown -> {
+        var owner = getOwnerWindow();
+        if (owner instanceof Stage ownerStage && !ownerStage.getIcons().isEmpty())
+            icon.setImage(ownerStage.getIcons().get(0));
+    };
 
     /**
      * initial SimplePopupNotification
@@ -38,7 +49,7 @@ public class SimplePopupNotification extends PopupNotification {
     /**
      * initial SimplePopupNotification
      *
-     * @param title title
+     * @param title   title
      * @param message message
      */
     public SimplePopupNotification(@NotNull String title, @NotNull String message) {
@@ -48,14 +59,15 @@ public class SimplePopupNotification extends PopupNotification {
         messageProperty.set(message);
 
         createContent();
+        addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
     }
 
     /**
      * initial SimplePopupNotification
      *
      * @param duration display duration
-     * @param title title
-     * @param message message
+     * @param title    title
+     * @param message  message
      */
     public SimplePopupNotification(@NotNull Duration duration, @NotNull String title, @NotNull String message) {
         super(duration);
@@ -64,6 +76,7 @@ public class SimplePopupNotification extends PopupNotification {
         messageProperty.set(message);
 
         createContent();
+        addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
     }
 
     /**
@@ -142,7 +155,7 @@ public class SimplePopupNotification extends PopupNotification {
         var close = new Button();
         var closeImage = new ImageView();
         var title = new Label();
-        var header = new HBox(3, title, close);
+        var header = new HBox(3, icon, title, close);
         var message = new Label();
 
         container.setId("root");
@@ -155,6 +168,8 @@ public class SimplePopupNotification extends PopupNotification {
                 Objects.requireNonNull(getClass().getResource("/com/amirali/fxdialogs/themes/default-simple-popup-notification-theme.css")).toExternalForm()
         );
 
+        icon.setFitWidth(30);
+        icon.setFitHeight(30);
         title.textProperty().bind(titleProperty);
         HBox.setHgrow(title, Priority.ALWAYS);
         title.setMaxWidth(Double.MAX_VALUE);
