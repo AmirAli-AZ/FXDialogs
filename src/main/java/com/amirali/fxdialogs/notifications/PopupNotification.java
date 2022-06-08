@@ -76,7 +76,7 @@ public class PopupNotification extends Popup {
      */
     public PopupNotification(Node... nodes) {
         getContent().addAll(nodes);
-        addEventFilter(WindowEvent.WINDOW_SHOWN, shownEvent);
+        addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
         addEventHandler(WindowEvent.WINDOW_HIDDEN, hiddenEvent);
     }
 
@@ -89,7 +89,7 @@ public class PopupNotification extends Popup {
     public PopupNotification(@NotNull Duration duration, Node... nodes) {
         getContent().addAll(nodes);
         durationProperty.set(duration);
-        addEventFilter(WindowEvent.WINDOW_SHOWN, shownEvent);
+        addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
         addEventHandler(WindowEvent.WINDOW_HIDDEN, hiddenEvent);
     }
 
