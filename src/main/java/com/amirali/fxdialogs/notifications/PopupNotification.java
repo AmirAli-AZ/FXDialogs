@@ -48,8 +48,8 @@ public class PopupNotification extends Popup {
             var player = new AudioClip(soundPath);
             player.play();
         }
-        applyPosition(position, marginProperty.get());
-        marginProperty.addListener((observableValue, oldValue, newValue) -> applyPosition(position, newValue));
+        applyPosition();
+        marginProperty.addListener((observableValue, oldValue, newValue) -> applyPosition());
 
         if (timeline != null)
             timeline.play();
@@ -76,7 +76,7 @@ public class PopupNotification extends Popup {
      */
     public PopupNotification(Node... nodes) {
         getContent().addAll(nodes);
-        addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
+        addEventFilter(WindowEvent.WINDOW_SHOWN, shownEvent);
         addEventHandler(WindowEvent.WINDOW_HIDDEN, hiddenEvent);
     }
 
@@ -89,11 +89,22 @@ public class PopupNotification extends Popup {
     public PopupNotification(@NotNull Duration duration, Node... nodes) {
         getContent().addAll(nodes);
         durationProperty.set(duration);
-        addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
+        addEventFilter(WindowEvent.WINDOW_SHOWN, shownEvent);
         addEventHandler(WindowEvent.WINDOW_HIDDEN, hiddenEvent);
     }
 
-    private void applyPosition(@NotNull NotificationPosition position, @NotNull Insets margin) {
+    private void applyPosition() {
+        var delta = calculatePosition();
+        setX(delta.x());
+        setY(delta.y());
+    }
+
+    /**
+     * calculates notification position
+     *
+     * @return Delta
+     */
+    public Delta calculatePosition() {
         var visualBounds = Screen.getPrimary().getVisualBounds();
         var notificationsHeight = 0.0;
         try {
@@ -103,38 +114,39 @@ public class PopupNotification extends Popup {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        var margin = marginProperty.get();
 
-        switch (position) {
-            case BOTTOM_RIGHT -> {
-                setX(visualBounds.getMinX() + (visualBounds.getWidth() - getWidth()) - margin.getRight());
-                setY((visualBounds.getMinY() + (visualBounds.getHeight() - getHeight()) - margin.getBottom()) - notificationsHeight);
-            }
+        return switch (position) {
+            case BOTTOM_RIGHT -> new Delta(
+                    visualBounds.getMinX() + (visualBounds.getWidth() - getWidth()) - margin.getRight(),
+                    (visualBounds.getMinY() + (visualBounds.getHeight() - getHeight()) - margin.getBottom()) - notificationsHeight
+            );
 
-            case BOTTOM_LEFT -> {
-                setX(margin.getLeft());
-                setY((visualBounds.getMinY() + (visualBounds.getHeight() - getHeight()) - margin.getBottom()) - notificationsHeight);
-            }
+            case BOTTOM_LEFT -> new Delta(
+                    margin.getLeft(),
+                    (visualBounds.getMinY() + (visualBounds.getHeight() - getHeight()) - margin.getBottom()) - notificationsHeight
+            );
 
-            case CENTER_BOTTOM -> {
-                setX((visualBounds.getWidth() - getWidth()) / 2);
-                setY((visualBounds.getMinY() + (visualBounds.getHeight() - getHeight()) - margin.getBottom()) - notificationsHeight);
-            }
+            case CENTER_BOTTOM -> new Delta(
+                (visualBounds.getWidth() - getWidth()) / 2,
+                (visualBounds.getMinY() + (visualBounds.getHeight() - getHeight()) - margin.getBottom()) - notificationsHeight
+            );
 
-            case TOP_RIGHT -> {
-                setX(visualBounds.getMinX() + (visualBounds.getWidth() - getWidth()) - margin.getRight());
-                setY(margin.getTop() + notificationsHeight);
-            }
+            case TOP_RIGHT -> new Delta(
+                visualBounds.getMinX() + (visualBounds.getWidth() - getWidth()) - margin.getRight(),
+                margin.getTop() + notificationsHeight
+            );
 
-            case TOP_LEFT -> {
-                setX(margin.getLeft());
-                setY(margin.getTop() + notificationsHeight);
-            }
+            case TOP_LEFT -> new Delta(
+                margin.getLeft(),
+                margin.getTop() + notificationsHeight
+            );
 
-            case CENTER_TOP -> {
-                setX((visualBounds.getWidth() - getWidth()) / 2);
-                setY(margin.getTop() + notificationsHeight);
-            }
-        }
+            case CENTER_TOP -> new Delta(
+                (visualBounds.getWidth() - getWidth()) / 2,
+                margin.getTop() + notificationsHeight
+            );
+        };
     }
 
     /**
