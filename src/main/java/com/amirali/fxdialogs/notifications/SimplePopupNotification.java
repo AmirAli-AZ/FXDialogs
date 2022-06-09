@@ -35,6 +35,8 @@ public class SimplePopupNotification extends PopupNotification {
         var owner = getOwnerWindow();
         if (owner instanceof Stage ownerStage && !ownerStage.getIcons().isEmpty())
             icon.setImage(ownerStage.getIcons().get(0));
+        else
+            icon.setManaged(false);
     };
 
     /**
