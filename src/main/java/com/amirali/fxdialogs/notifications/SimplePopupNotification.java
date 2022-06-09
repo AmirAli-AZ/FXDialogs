@@ -33,10 +33,12 @@ public class SimplePopupNotification extends PopupNotification {
     private final ImageView icon = new ImageView();
     private final EventHandler<WindowEvent> shownEvent = windowEvent -> {
         var owner = getOwnerWindow();
-        if (owner instanceof Stage ownerStage && !ownerStage.getIcons().isEmpty())
+        if (owner instanceof Stage ownerStage && !ownerStage.getIcons().isEmpty()) {
+            icon.setManaged(true);
             icon.setImage(ownerStage.getIcons().get(0));
-        else
+        }else {
             icon.setManaged(false);
+        }
     };
 
     /**
