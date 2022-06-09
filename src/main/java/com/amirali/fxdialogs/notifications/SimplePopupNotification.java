@@ -31,7 +31,7 @@ public class SimplePopupNotification extends PopupNotification {
     private final ObjectProperty<Image> closeImageProperty = new SimpleObjectProperty<>(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/amirali/fxdialogs/icons/round_close_black_24dp.png"))));
     private final VBox container = new VBox(5);
     private final ImageView icon = new ImageView();
-    private final EventHandler<WindowEvent> shownEvent = window_shown -> {
+    private final EventHandler<WindowEvent> shownEvent = windowEvent -> {
         var owner = getOwnerWindow();
         if (owner instanceof Stage ownerStage && !ownerStage.getIcons().isEmpty())
             icon.setImage(ownerStage.getIcons().get(0));
