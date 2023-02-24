@@ -133,6 +133,22 @@ public final class SplashScreen extends Stage {
     }
 
     /**
+     * sets SplashScreenCallBack
+     * @param callBack SplashScreenCallBack
+     */
+    public void setCallBack(@NotNull SplashScreenCallBack callBack) {
+        builder.callBack = callBack;
+    }
+
+    /**
+     * returns SplashScreenCallBack
+     * @return SplashScreenCallBack
+     */
+    public SplashScreenCallBack getCallBack() {
+        return builder.callBack;
+    }
+
+    /**
      * SplashScreen builder
      */
     public static class Builder {
