@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.attribute.DosFileAttributeView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +27,11 @@ final class NotificationInfoLogger {
         var gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
+        var writer = new FileWriter(file);
         if (Files.exists(file.toPath())) {
             var reader = new FileReader(file);
             var data = gson.fromJson(reader, NotificationInfo[].class);
             reader.close();
-            var writer = new FileWriter(file);
             if (data != null && data.length > 0) {
                 var dataList = new ArrayList<>(List.of(data));
                 dataList.add(info);
@@ -38,14 +39,11 @@ final class NotificationInfoLogger {
             }else {
                 gson.toJson(new NotificationInfo[]{info}, writer);
             }
-            writer.flush();
-            writer.close();
         }else {
-            var writer = new FileWriter(file);
             gson.toJson(new NotificationInfo[]{info}, writer);
-            writer.flush();
-            writer.close();
         }
+        writer.flush();
+        writer.close();
     }
 
     /**
@@ -56,21 +54,22 @@ final class NotificationInfoLogger {
      */
     public static void removeIf(@NotNull NotificationInfo info) throws IOException {
         var file = getFile();
-        if (Files.exists(file.toPath())) {
-            var gson = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .create();
-            var reader = new FileReader(file);
-            var data = gson.fromJson(reader, NotificationInfo[].class);
-            reader.close();
-            if (data != null && data.length > 0) {
-                var dataList = new ArrayList<>(List.of(data));
-                dataList.removeIf(predicate -> predicate.getId().equals(info.getId()));
-                var writer = new FileWriter(file);
-                gson.toJson(dataList, writer);
-                writer.flush();
-                writer.close();
-            }
+        if (Files.notExists(file.toPath()))
+            return;
+
+        var gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .create();
+        var reader = new FileReader(file);
+        var data = gson.fromJson(reader, NotificationInfo[].class);
+        reader.close();
+        if (data != null && data.length > 0) {
+            var dataList = new ArrayList<>(List.of(data));
+            dataList.removeIf(predicate -> predicate.id().equals(info.id()));
+            var writer = new FileWriter(file);
+            gson.toJson(dataList, writer);
+            writer.flush();
+            writer.close();
         }
     }
 
@@ -97,7 +96,7 @@ final class NotificationInfoLogger {
         var file = new File(
                 System.getProperty("user.home") +
                         File.separator +
-                        "fxdialogs" +
+                        ".fxdialogs" +
                         File.separator +
                         "notification-logs.json"
         );
@@ -105,7 +104,8 @@ final class NotificationInfoLogger {
 
         if (!Files.exists(parent.toPath())) {
             Files.createDirectories(parent.toPath());
-            Files.setAttribute(parent.toPath(), "dos:hidden", true);
+            var dosFileAttributeView = Files.getFileAttributeView(parent.toPath(), DosFileAttributeView.class);
+            dosFileAttributeView.setHidden(true);
         }
 
         return file;

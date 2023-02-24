@@ -47,15 +47,6 @@ public final class TimePickerDialog extends Stage {
         builder.bindArrowDownImageProperty(arrowDownImageProperty);
 
         var scene = new Scene(builder.container);
-        if (builder.styles.isEmpty()) {
-            scene.getStylesheets().add(
-                    Objects.requireNonNull(
-                            getClass().getResource("themes/default-timepicker-dialog-theme.css")
-                    ).toExternalForm()
-            );
-        }else {
-            scene.getStylesheets().addAll(builder.styles);
-        }
         setScene(scene);
         initModality(Modality.APPLICATION_MODAL);
     }
@@ -117,7 +108,6 @@ public final class TimePickerDialog extends Stage {
                 minutesArrowDown = new ImageView();
 
         private int hours, minutes;
-        private final List<String> styles = new ArrayList<>();
         private boolean init = true;
         private final ObjectProperty<Time> timeProperty = new SimpleObjectProperty<>() {
             @Override
@@ -170,15 +160,15 @@ public final class TimePickerDialog extends Stage {
             vBox1.getChildren().addAll(hoursArrowUp, hoursLabel, hoursArrowDown);
             vBox2.getChildren().addAll(minutesArrowUp, minutesLabel, minutesArrowDown);
 
-            amButton.setId("am-button");
+            amButton.getStyleClass().add("am-button");
             amButton.setToggleGroup(toggleGroup);
-            pmButton.setId("pm-button");
+            pmButton.getStyleClass().add("pm-button");
             pmButton.setToggleGroup(toggleGroup);
             vBox3.getChildren().addAll(amButton, pmButton);
             container.setAlignment(Pos.CENTER);
 
             var colon = new Label(":");
-            colon.setId("colon");
+            colon.getStyleClass().add("colon");
             container.getChildren().addAll(vBox1, colon, vBox2, vBox3);
 
             var currentTime = Time.getCurrentTime();
@@ -187,9 +177,9 @@ public final class TimePickerDialog extends Stage {
             toggleGroup.selectToggle(currentTime.am_pm() == Time.AM_PM.AM ? amButton : pmButton);
             hours = currentTime.hours();
             minutes = currentTime.minutes();
-            hoursLabel.setId("hours");
+            hoursLabel.getStyleClass().add("hours");
             hoursLabel.setText(String.valueOf(hours));
-            minutesLabel.setId("minutes");
+            minutesLabel.getStyleClass().add("minutes");
             minutesLabel.setText(String.valueOf(minutes));
 
             hoursArrowUp.setOnMouseClicked(mouseEvent -> {
@@ -227,17 +217,6 @@ public final class TimePickerDialog extends Stage {
          */
         public Builder setTime(@NotNull Time time) {
             timeProperty.set(time);
-
-            return this;
-        }
-
-        /**
-         * adds styles to style list and that list will be added to the scene
-         * @param styles dialog styles
-         * @return Builder
-         */
-        public Builder setStyles(String... styles) {
-            Collections.addAll(this.styles, styles);
 
             return this;
         }

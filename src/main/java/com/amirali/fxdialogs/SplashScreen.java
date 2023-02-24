@@ -1,5 +1,6 @@
 package com.amirali.fxdialogs;
 
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
@@ -46,20 +47,18 @@ public final class SplashScreen extends Stage {
 
     private void setupSplashScreen() {
         setAlwaysOnTop(true);
-        initStyle(StageStyle.UNDECORATED);
+        initStyle(StageStyle.TRANSPARENT);
 
         if (builder.scene != null) {
             setScene(builder.scene);
         } else if (builder.container != null) {
             var scene = new Scene(builder.container);
-            if (!builder.styles.isEmpty())
-                scene.getStylesheets().addAll(builder.styles);
             setScene(scene);
         } else {
             throw new NullPointerException("container or scene cannot be null");
         }
 
-        durationProperty.set(builder.duration);
+        setDuration(builder.duration);
 
         addEventHandler(WindowEvent.WINDOW_SHOWN, windowEvent -> {
             if (timeline != null)
@@ -70,7 +69,7 @@ public final class SplashScreen extends Stage {
         });
 
         addEventHandler(WindowEvent.WINDOW_HIDDEN, windowEvent -> {
-            if (timeline != null && currentTimeProperty.get().lessThan(durationProperty.get())) {
+            if (timeline != null && timeline.getStatus() == Animation.Status.RUNNING) {
                 timeline.stop();
                 closeSplash();
             }
@@ -78,9 +77,6 @@ public final class SplashScreen extends Stage {
     }
 
     private void closeSplash() {
-        if (builder.primaryStage.isShowing())
-            throw new IllegalStateException("Cannot show the SplashScreen once primaryStage has been set visible");
-
         builder.primaryStage.show();
 
         if (isShowing())
@@ -109,6 +105,15 @@ public final class SplashScreen extends Stage {
     }
 
     /**
+     * sets duration of SplashScreen
+     *
+     * @param duration Duration
+     */
+    public void setDuration(@NotNull Duration duration) {
+        durationProperty.set(duration);
+    }
+
+    /**
      * SplashScreen display duration
      *
      * @return Duration
@@ -132,7 +137,6 @@ public final class SplashScreen extends Stage {
      */
     public static class Builder {
 
-        private final List<String> styles = new ArrayList<>();
         private final Duration duration;
         private Parent container;
         private SplashScreenCallBack callBack;
@@ -152,18 +156,6 @@ public final class SplashScreen extends Stage {
 
             this.duration = duration;
             this.primaryStage = primaryStage;
-        }
-
-        /**
-         * adds styles to style list and that list will be added to the scene
-         *
-         * @param styles SplashScreen styles
-         * @return Builder
-         */
-        public Builder setStyles(String... styles) {
-            Collections.addAll(this.styles, styles);
-
-            return this;
         }
 
         /**

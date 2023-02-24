@@ -50,12 +50,6 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
             pane.getButtonTypes().add(ButtonType.CLOSE);
         else
             pane.getButtonTypes().addAll(builder.buttonTypes);
-
-        var scene = (Scene) pane.getScene();
-        if (builder.styles.isEmpty())
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("themes/default-exception-dialog-theme.css")).toExternalForm());
-        else
-            scene.getStylesheets().addAll(builder.styles);
         initModality(Modality.APPLICATION_MODAL);
     }
 
@@ -125,7 +119,6 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
         private final TextArea errorDetails = new TextArea();
 
         private final List<ButtonType> buttonTypes = new ArrayList<>();
-        private final List<String> styles = new ArrayList<>();
         private final ObjectProperty<Image> errorIconImageProperty = new SimpleObjectProperty<>(
                 new Image(
                         Objects.requireNonNull(getClass().getResourceAsStream("icons/ic_error_64.png"))
@@ -151,19 +144,19 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
          */
         public Builder() {
             ImageView errorIcon = new ImageView();
-            errorIcon.setId("error-icon");
+            errorIcon.getStyleClass().add("error-icon");
             errorIcon.setFitWidth(40);
             errorIcon.setFitHeight(40);
             errorIcon.imageProperty().bind(errorIconImageProperty);
 
             Label defaultLabelMessage = new Label();
-            defaultLabelMessage.setId("message");
+            defaultLabelMessage.getStyleClass().add("message");
             defaultLabelMessage.setWrapText(true);
             HBox.setHgrow(defaultLabelMessage, Priority.ALWAYS);
             defaultLabelMessage.setMaxWidth(Double.MAX_VALUE);
             defaultLabelMessage.textProperty().bind(dialogMessageProperty);
 
-            errorDetails.setId("error-details");
+            errorDetails.getStyleClass().add("error-details");
             errorDetails.setEditable(false);
 
             defaultHeader.setAlignment(Pos.CENTER_LEFT);
@@ -199,17 +192,6 @@ public final class ExceptionDialog extends Dialog<ButtonType> {
          */
         public Builder addButtons(@NotNull ButtonType... buttonTypes) {
             Collections.addAll(this.buttonTypes, buttonTypes);
-
-            return this;
-        }
-
-        /**
-         * adds styles to style list and that list will be added to the scene
-         * @param styles dialog styles
-         * @return Builder
-         */
-        public Builder setStyles(String... styles) {
-            Collections.addAll(this.styles, styles);
 
             return this;
         }

@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,22 +37,11 @@ public final class AlertDialog extends Stage {
 
     private void setupDialog() {
         var scene = new Scene(builder.container);
-        if (builder.styles.isEmpty()) {
-            scene.getStylesheets().add(
-                    Objects.requireNonNull(
-                            getClass().getResource("themes/default-alert-dialog-theme.css")
-                    ).toExternalForm()
-            );
-        } else {
-            scene.getStylesheets().addAll(builder.styles);
-        }
         setScene(scene);
         setTitle(builder.title.getText());
         initModality(Modality.APPLICATION_MODAL);
 
         // play audio when stage is shown
-
-
         addEventHandler(WindowEvent.WINDOW_SHOWN, windowEvent -> {
             if (builder.soundPath != null) {
                 var player = new AudioClip(builder.soundPath);
@@ -164,7 +152,6 @@ public final class AlertDialog extends Stage {
         private final List<DialogInterface.OnClickListener> positiveListeners = new ArrayList<>(),
                 negativeListeners = new ArrayList<>(),
                 naturalListeners = new ArrayList<>();
-        private final List<String> styles = new ArrayList<>();
         private String soundPath;
         private AlertDialog dialog;
         private final StringProperty dialogTitleProperty = new SimpleStringProperty() {
@@ -201,22 +188,22 @@ public final class AlertDialog extends Stage {
         public Builder() {
             // init
 
-            message.setId("message");
+            message.getStyleClass().add("message");
             message.setWrapText(true);
             message.setMaxWidth(Double.MAX_VALUE);
             message.textProperty().bind(dialogMessageProperty);
 
-            title.setId("title");
+            title.getStyleClass().add("title");
             title.setWrapText(true);
             title.setMaxWidth(Double.MAX_VALUE);
             title.textProperty().bind(dialogTitleProperty);
 
-            positiveButton.setId("positive-button");
+            positiveButton.getStyleClass().add("positive-button");
             positiveButton.setDefaultButton(true);
 
-            negativeButton.setId("negative-button");
+            negativeButton.getStyleClass().add("negative-button");
 
-            naturalButton.setId("natural-button");
+            naturalButton.getStyleClass().add("natural-button");
             ButtonBar.setButtonData(naturalButton, ButtonBar.ButtonData.LEFT);
 
             buttons.setPadding(new Insets(10));
@@ -232,6 +219,7 @@ public final class AlertDialog extends Stage {
             container.setTop(top);
             container.setCenter(center);
             container.setBottom(buttons);
+            container.getStyleClass().add("alert-dialog");
         }
 
         /**
@@ -299,8 +287,7 @@ public final class AlertDialog extends Stage {
             negativeButton.setOnAction(event -> {
                 for (DialogInterface.OnClickListener clickListener : negativeListeners)
                     clickListener.onClick(DialogInterface.NEGATIVE_BUTTON);
-                if (dialog != null)
-                    dialog.close();
+                dialog.close();
             });
 
             if (!isNegativeButtonAdded) {
@@ -326,8 +313,7 @@ public final class AlertDialog extends Stage {
             naturalButton.setOnAction(event -> {
                 for (DialogInterface.OnClickListener clickListener : naturalListeners)
                     clickListener.onClick(DialogInterface.NATURAL_BUTTON);
-                if (dialog != null)
-                    dialog.close();
+                dialog.close();
             });
 
             if (!isNaturalButtonAdded) {
@@ -339,33 +325,22 @@ public final class AlertDialog extends Stage {
         }
 
         /**
-         * adds styles to style list and that list will be added to the scene
-         *
-         * @param styles dialog styles
-         * @return Builder
-         */
-        public Builder addStyles(String... styles) {
-            Collections.addAll(this.styles, styles);
-
-            return this;
-        }
-
-        /**
          * creates and adds RadioButton according to the items passed
          *
-         * @param items         RadioButtons texts
+         * @param items         text of the radio buttons
          * @param selectedIndex default selected RadioButton
          * @param listener      selected listener
          * @return Builder
          */
-        public Builder setSingleChoiceItems(@NotNull String[] items, int selectedIndex, @NotNull DialogInterface.OnSingleChoiceSelectedListener listener) {
+        public <T> Builder setSingleChoiceItems(@NotNull T[] items, int selectedIndex, @NotNull DialogInterface.OnSingleChoiceSelectedListener listener) {
             if (isCheckBoxesContainerAdded || isCustomNode)
                 return this;
 
             if (isRadioButtonsContainerAdded)
                 radioButtonsContainer.getChildren().clear();
             for (int i = 0; i < items.length; i++) {
-                var radioButton = new RadioButton(items[i]);
+                var radioButton = new RadioButton(items[i].toString());
+                radioButton.setUserData(i);
                 radioButton.setToggleGroup(toggleGroup);
                 radioButton.setSelected(selectedIndex != -1 && i == selectedIndex);
 
@@ -376,8 +351,8 @@ public final class AlertDialog extends Stage {
                 isRadioButtonsContainerAdded = true;
             }
             toggleGroup.selectedToggleProperty().addListener((observableValue, oldToggle, newToggle) -> {
-                var index = radioButtonsContainer.getChildren().indexOf(newToggle);
-                listener.onItemSelected(index);
+                var index = ((int) newToggle.getUserData());
+                listener.onItemSelected(index, items[index]);
             });
 
             return this;
@@ -386,36 +361,36 @@ public final class AlertDialog extends Stage {
         /**
          * creates and adds RadioButton according to the items passed without default selected item
          *
-         * @param items    RadioButtons texts
+         * @param items    text of the radio buttons
          * @param listener selected listener
          * @return Builder
          */
-        public Builder setSingleChoiceItems(@NotNull String[] items, @NotNull DialogInterface.OnSingleChoiceSelectedListener listener) {
+        public <T> Builder setSingleChoiceItems(@NotNull T[] items, @NotNull DialogInterface.OnSingleChoiceSelectedListener listener) {
             return setSingleChoiceItems(items, -1, listener);
         }
 
         /**
          * creates and adds CheckBoxes according to the items passed
          *
-         * @param items           CheckBoxes texts
+         * @param items           text of the checkboxes
          * @param selectedIndexes default selected items
          * @param listener        selected listener
          * @return Builder
          */
-        public Builder setMultiChoiceItems(@NotNull String[] items, @NotNull Integer[] selectedIndexes, @NotNull DialogInterface.OnMultiChoiceSelectedListener listener) {
+        public <T> Builder setMultiChoiceItems(@NotNull T[] items, @NotNull Integer[] selectedIndexes, @NotNull DialogInterface.OnMultiChoiceSelectedListener listener) {
             if (isRadioButtonsContainerAdded || isCustomNode)
                 return this;
 
             if (isCheckBoxesContainerAdded)
                 checkBoxesContainer.getChildren().clear();
             for (int i = 0; i < items.length; i++) {
-                var checkBox = new CheckBox(items[i]);
+                var checkBox = new CheckBox(items[i].toString());
                 for (int j : selectedIndexes) {
                     if (i == j)
                         checkBox.setSelected(true);
                 }
                 int finalI = i;
-                checkBox.selectedProperty().addListener((observableValue, oldValue, newValue) -> listener.onItemSelected(finalI, newValue));
+                checkBox.selectedProperty().addListener((observableValue, oldValue, newValue) -> listener.onItemSelected(finalI, newValue, items[finalI]));
                 checkBoxesContainer.getChildren().add(checkBox);
             }
             if (!isCheckBoxesContainerAdded) {
@@ -429,11 +404,11 @@ public final class AlertDialog extends Stage {
         /**
          * creates and adds CheckBoxes according to the items passed without default selected items
          *
-         * @param items    CheckBoxes texts
+         * @param items    text of the checkboxes
          * @param listener selected listener
          * @return Builder
          */
-        public Builder setMultiChoiceItems(@NotNull String[] items, @NotNull DialogInterface.OnMultiChoiceSelectedListener listener) {
+        public <T> Builder setMultiChoiceItems(@NotNull T[] items, @NotNull DialogInterface.OnMultiChoiceSelectedListener listener) {
             return setMultiChoiceItems(items, new Integer[]{}, listener);
         }
 

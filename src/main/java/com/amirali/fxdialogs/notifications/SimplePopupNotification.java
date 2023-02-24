@@ -45,7 +45,7 @@ public class SimplePopupNotification extends PopupNotification {
      * initial SimplePopupNotification
      */
     public SimplePopupNotification() {
-        super();
+        super(null);
 
         createContent();
     }
@@ -57,10 +57,10 @@ public class SimplePopupNotification extends PopupNotification {
      * @param message message
      */
     public SimplePopupNotification(@NotNull String title, @NotNull String message) {
-        super();
+        super(null);
 
-        titleProperty.set(title);
-        messageProperty.set(message);
+        setTitle(title);
+        setMessage(message);
 
         createContent();
         addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
@@ -74,10 +74,10 @@ public class SimplePopupNotification extends PopupNotification {
      * @param message  message
      */
     public SimplePopupNotification(@NotNull Duration duration, @NotNull String title, @NotNull String message) {
-        super(duration);
+        super(duration, null);
 
-        titleProperty.set(title);
-        messageProperty.set(message);
+        setTitle(title);
+        setMessage(message);
 
         createContent();
         addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
@@ -162,15 +162,12 @@ public class SimplePopupNotification extends PopupNotification {
         var header = new HBox(3, icon, title, close);
         var message = new Label();
 
-        container.setId("root");
-        title.setId("title");
-        message.setId("message");
-        close.setId("close");
+        container.getStyleClass().add("simple-notification");
+        title.getStyleClass().add("title");
+        message.getStyleClass().add("message");
+        close.getStyleClass().add("close");
 
         container.setPrefSize(320, 150);
-        container.getStylesheets().add(
-                Objects.requireNonNull(getClass().getResource("/com/amirali/fxdialogs/themes/default-simple-popup-notification-theme.css")).toExternalForm()
-        );
 
         icon.setFitWidth(30);
         icon.setFitHeight(30);
@@ -191,6 +188,6 @@ public class SimplePopupNotification extends PopupNotification {
 
         container.getChildren().addAll(header, message);
 
-        getContent().add(container);
+        getScene().setRoot(container);
     }
 }

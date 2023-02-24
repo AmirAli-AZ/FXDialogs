@@ -201,14 +201,11 @@ try {
 <p>
 
 ```java
-var root = new BorderPane();
-
 var persistentBottomSheet = new PersistentBottomSheet();
 persistentBottomSheet.setPrefHeight(150);
 persistentBottomSheet.setStyle("-fx-background-color : orange;");
 persistentBottomSheet.setDuration(Duration.seconds(.5));
-persistentBottomSheet.dragHandlerImageProperty().set(new Image(Objects.requireNonNull(getClass().getResourceAsStream("round_horizontal_rule_white_24dp.png"))));
-persistentBottomSheet.addSupportResizing();
+persistentBottomSheet.addResizingSupport();
 
 var label = new Label("Bottom Sheet");
 label.setStyle("-fx-text-fill : white; -fx-font-size : 18px;");
@@ -220,15 +217,19 @@ persistentBottomSheet.getChildren().add(bottomSheetContentRoot);
 var showButton = new Button("Hide");
 showButton.setPrefSize(75, 25);
 showButton.setOnAction(event -> {
-    persistentBottomSheet.showingProperty().set(!persistentBottomSheet.isShowing());
-        if (persistentBottomSheet.isShowing())
-            showButton.setText("Hide");
-        else
-            showButton.setText("Show");
-    });
+    persistentBottomSheet.setShowing(!persistentBottomSheet.isShowing());
+    if (persistentBottomSheet.isShowing())
+        showButton.setText("Hide");
+    else
+        showButton.setText("Show");
+});
 
-root.setCenter(new StackPane(showButton));
-root.setBottom(persistentBottomSheet);
+var region = new Region();
+region.setMaxHeight(Double.MAX_VALUE);
+VBox.setVgrow(region, Priority.ALWAYS);
+
+var root = new VBox(showButton, region, persistentBottomSheet);
+root.setAlignment(Pos.CENTER);
 ```
 
 BottomSheetCallBack
@@ -238,22 +239,22 @@ persistentBottomSheet.setCallBack(new BottomSheetCallBack() {
     @Override
     public void onState(PersistentBottomSheet bottomSheet, int state) {
         switch (state) {
-            case PersistentBottomSheet.EXPANDED ->
-                    System.out.println("expanded");
-            case PersistentBottomSheet.COLLAPSED ->
-                    System.out.println("collapsed");
-            case PersistentBottomSheet.DRAGGED -> 
-                    System.out.println("dragged");
+            case PersistentBottomSheet.EXPANDING ->
+                System.out.println("expanding");
+            case PersistentBottomSheet.COLLAPSING ->
+                System.out.println("collapsing");
+            case PersistentBottomSheet.DRAGGED ->
+                System.out.println("dragged");
             case PersistentBottomSheet.HIDDEN ->
-                    System.out.println("hidden");
+                System.out.println("hidden");
             case PersistentBottomSheet.SHOWN ->
-                    System.out.println("shown");
+                System.out.println("shown");
         }
     }
 
     @Override
-    public void onResized(PersistentBottomSheet bottomSheet, int percent) {
-        System.out.println(percent + "%");
+    public void onResized(PersistentBottomSheet bottomSheet, double height) {
+        System.out.println(height);
     }
 });
 ```
@@ -270,6 +271,7 @@ persistentBottomSheet.setCallBack(new BottomSheetCallBack() {
 <p>
 
 ```java
+import com.amirali.fxdialogs.SplashScreen;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -278,7 +280,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class Main extends Application {
+public class App extends Application {
 
     public static void main(String[] args) {
         launch(args);
@@ -290,7 +292,7 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(createContent(), 600, 400));
 
         var splashScreen = new SplashScreen.Builder(Duration.seconds(2), primaryStage)
-                .setScene(new Scene(createSplashScreenContent(), 600, 400))
+                .setLayout(createSplashScreenContent())
                 .create();
         splashScreen.show();
     }
@@ -301,6 +303,7 @@ public class Main extends Application {
 
         var root = new StackPane(label);
         root.setStyle("-fx-background-color: linear-gradient(to right, #FF508E, #5AC0FF);");
+        root.setPrefSize(600, 400);
 
         return root;
     }
@@ -314,6 +317,7 @@ public class Main extends Application {
 
         return root;
     }
+
 }
 ```
 
@@ -342,11 +346,11 @@ public class Main extends Application {
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<AnchorPane id="root" prefHeight="150.0" prefWidth="320.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Label id="title" fx:id="title" layoutX="14.0" layoutY="14.0" text="ExampleNotification" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <Label id="message" fx:id="message" layoutX="8.0" layoutY="46.0" text="This is a custom notification" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-   </children>
+<AnchorPane styleClass="notification" prefHeight="150.0" prefWidth="320.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Label styleClass="title" fx:id="title" layoutX="14.0" layoutY="14.0" text="ExampleNotification" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        <Label styleClass="message" fx:id="message" layoutX="8.0" layoutY="46.0" text="This is a custom notification" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+    </children>
 </AnchorPane>
 ```
 
@@ -355,21 +359,22 @@ public class Main extends Application {
 `style.css`
 
 ```
-#root {
+.notification {
     -fx-background-color: white;
-    -fx-background-insets: 5;
-    -fx-padding: 8;
+    -fx-background-radius: 5px;
+    -fx-background-insets: 5px;
     -fx-effect: dropshadow(three-pass-box, black, 10, 0, 0, 0);
-    -fx-background-radius: 5;
+    -fx-padding: 8px;
 }
 
-#title {
-    -fx-font-size: 20px;
+.notification .title {
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
-#message {
+.notification .message {
     -fx-font-size: 16px;
+    -fx-alignment: top-left;
 }
 ```
 
@@ -381,9 +386,8 @@ try {
 
     var notification = new PopupNotification(Duration.seconds(2), ((AnchorPane) loader.load()));
     notification.setSound(Sounds.Succeeded);
-    notification.setAutoHide(true);
     // be sure to always choose a unique id for every notification
-    notification.setId(UUID.randomUUID().toString());
+    notification.setNotificationId(UUID.randomUUID().toString());
     notification.show(primaryStage);
 }catch (IOException e) {
     e.printStackTrace();
@@ -442,8 +446,38 @@ if (SystemTray.isSupported()) {
 ```java
 var notification = new SimplePopupNotification(Duration.seconds(2), "SimplePopupNotification", "This is a simple popup notification");
 // be sure to always choose a unique id for every notification
-notification.setId(UUID.randomUUID().toString());
+notification.setNotificationId(UUID.randomUUID().toString());
 notification.show(primaryStage);
+```
+
+`style.css`
+
+```
+.simple-notification {
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+    -fx-background-insets: 5px;
+    -fx-effect: dropshadow(three-pass-box, black, 10, 0, 0, 0);
+    -fx-padding: 8px;
+}
+
+.simple-notification .title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.simple-notification .message {
+    -fx-font-size: 16px;
+    -fx-alignment: top-left;
+}
+
+.simple-notification .close {
+    -fx-background-color: transparent;
+}
+
+.simple-notification .close:hover {
+    -fx-background-color: #9E9E9E;
+}
 ```
 </p>
 
@@ -453,21 +487,19 @@ notification.show(primaryStage);
 
 ### Styling
 
-You can use `.setStyles(String... styles)` to add custom css styles to dialog
-
-example :
+example for alert dialog :
 
 ```
-.root {
+.alert-dialog {
     -fx-background-color : white;
 }
 
-#title {
+.alert-dialog .title {
     -fx-font-size : 18px;
     -fx-font-weight : bold;
 }
 
-#message {
+.alert-dialog .message {
     -fx-font-size : 16px;
 }
 ```

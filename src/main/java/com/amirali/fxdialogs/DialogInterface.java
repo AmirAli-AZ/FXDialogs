@@ -33,8 +33,9 @@ public interface DialogInterface {
         /**
          * the method is called when RadioButton selected
          * @param which index
+         * @param item item
          */
-        void onItemSelected(int which);
+        <T> void onItemSelected(int which, T item);
     }
 
     interface OnMultiChoiceSelectedListener {
@@ -42,7 +43,8 @@ public interface DialogInterface {
          * the method is called when CheckBox is checked or not
          * @param which index
          * @param isChecked CheckBox state whatever checked or not
+         * @param item item
          */
-        void onItemSelected(int which, boolean isChecked);
+        <T> void onItemSelected(int which, boolean isChecked, T item);
     }
 }

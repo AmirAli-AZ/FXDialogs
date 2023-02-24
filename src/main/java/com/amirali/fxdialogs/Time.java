@@ -29,10 +29,11 @@ public record Time(int hours, int minutes, AM_PM am_pm) {
      * @return Time
      */
     public static Time getCurrentTime() {
+        var calendar = Calendar.getInstance();
         return new Time(
-                Calendar.getInstance().get(Calendar.HOUR),
-                Calendar.getInstance().get(Calendar.MINUTE),
-                Calendar.getInstance().get(Calendar.AM_PM) == Calendar.AM ? Time.AM_PM.AM : Time.AM_PM.PM
+                calendar.get(Calendar.HOUR),
+                calendar.get(Calendar.MINUTE),
+                calendar.get(Calendar.AM_PM) == Calendar.AM ? Time.AM_PM.AM : Time.AM_PM.PM
         );
     }
 

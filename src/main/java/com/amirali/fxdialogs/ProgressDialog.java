@@ -38,15 +38,6 @@ public final class ProgressDialog extends Stage {
 
     private void setupDialog() {
         var scene = new Scene(builder.container);
-        if (builder.styles.isEmpty()) {
-            scene.getStylesheets().add(
-                    Objects.requireNonNull(
-                            getClass().getResource("themes/default-progress-dialog-theme.css")
-                    ).toExternalForm()
-            );
-        }else {
-            scene.getStylesheets().addAll(builder.styles);
-        }
         setScene(scene);
         initModality(Modality.APPLICATION_MODAL);
     }
@@ -71,7 +62,7 @@ public final class ProgressDialog extends Stage {
      * DoubleProperty of the ProgressDialog progress
      * @return DoubleProperty
      */
-    public DoubleProperty getProgressProperty() {
+    public DoubleProperty progressProperty() {
         return builder.progressProperty;
     }
 
@@ -148,7 +139,6 @@ public final class ProgressDialog extends Stage {
         private boolean isProgressAdded, isTitleAdded, isMessageAdded;
         // default progress type is Bar
         private ProgressBarType type = ProgressBarType.Bar;
-        private final List<String> styles = new ArrayList<>();
         private final StringProperty dialogTitleProperty = new SimpleStringProperty() {
             @Override
             public void set(String s) {
@@ -183,23 +173,28 @@ public final class ProgressDialog extends Stage {
         public Builder() {
             // init
 
-            title.setId("title");
+            title.getStyleClass().add("title");
             title.setWrapText(true);
             title.setMaxWidth(Double.MAX_VALUE);
             title.textProperty().bind(dialogTitleProperty);
-            message.setId("message");
+
+            message.getStyleClass().add("message");
             message.setWrapText(true);
             message.setMaxWidth(Double.MAX_VALUE);
             message.textProperty().bind(dialogMessageProperty);
+
             center.setPadding(new Insets(5));
             center.setAlignment(Pos.CENTER);
             top.setPadding(new Insets(10));
+
             progressBar.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(progressBar, Priority.ALWAYS);
             progressBar.progressProperty().bind(progressProperty);
             progressIndicator.progressProperty().bind(progressProperty);
+
             container.setCenter(center);
             container.setTop(top);
+            container.getStyleClass().add("progress-dialog");
         }
 
         /**
@@ -211,13 +206,10 @@ public final class ProgressDialog extends Stage {
             if (!isProgressAdded) {
                 this.type = type;
 
-                if (type == ProgressBarType.Bar) {
-                    progressBar.setId("progressBar");
+                if (type == ProgressBarType.Bar)
                     center.getChildren().add(progressBar);
-                }else {
-                    progressIndicator.setId("progressIndicator");
+                else
                     center.getChildren().add(progressIndicator);
-                }
                 isProgressAdded = true;
             }
 
@@ -253,17 +245,6 @@ public final class ProgressDialog extends Stage {
          */
         public Builder setDialogMessage(@NotNull String message) {
             dialogMessageProperty.set(message);
-
-            return this;
-        }
-
-        /**
-         * adds styles to style list and that list will be added to the scene
-         * @param styles dialog styles
-         * @return Builder
-         */
-        public Builder setStyles(String... styles) {
-            Collections.addAll(this.styles, styles);
 
             return this;
         }

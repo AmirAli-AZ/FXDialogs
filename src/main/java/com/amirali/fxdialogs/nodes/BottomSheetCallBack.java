@@ -15,7 +15,7 @@ public interface BottomSheetCallBack {
     /**
      * the method is called when bottom sheet dragged and resized
      * @param bottomSheet bottom sheet object
-     * @param percent percentage resized
+     * @param height bottom sheet height
      */
-    void onResized(PersistentBottomSheet bottomSheet, int percent);
+    void onResized(PersistentBottomSheet bottomSheet, double height);
 }

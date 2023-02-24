@@ -1,19 +1,17 @@
 package com.amirali.fxdialogs.nodes;
 
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 /**
  * @author Amir Ali
@@ -21,36 +19,43 @@ import java.util.Objects;
 
 public class PersistentBottomSheet extends VBox {
 
+    private TranslateTransition transition;
+
     private final BooleanProperty showingProperty = new SimpleBooleanProperty(true) {
         @Override
         public void set(boolean b) {
             super.set(b);
-            if (!performingShowHide) {
-                if (b)
-                    show();
-                else
-                    hide();
+            if (transition != null && transition.getStatus() == Animation.Status.RUNNING) {
+                super.set(!b);
+                return;
             }
+            transition = new TranslateTransition(getDuration(), PersistentBottomSheet.this);
+            transition.setInterpolator(Interpolator.EASE_BOTH);
+            transition.setOnFinished(event -> {
+                if (callBack != null)
+                    callBack.onState(PersistentBottomSheet.this, b ? SHOWN : HIDDEN);
+            });
+            if (b) {
+                transition.setFromY(getHeight());
+                transition.setToY(0);
+            }else {
+                transition.setToY(getHeight());
+            }
+            transition.play();
         }
     };
-    private final ObjectProperty<Image> dragHandlerImageProperty = new SimpleObjectProperty<>(
-            new Image(
-                    Objects.requireNonNull(getClass().getResourceAsStream("/com/amirali/fxdialogs/icons/round_horizontal_rule_black_24dp.png"))
-            )
-    );
     private final ObjectProperty<Duration> durationProperty = new SimpleObjectProperty<>(Duration.seconds(1));
-    private boolean performingShowHide, firstMouseDrag;
-    private double originalHeight, previousHeight;
+    private double previousHeight;
     private BottomSheetCallBack callBack;
 
     /**
      * when bottom sheet is collapsed
      */
-    public static final int COLLAPSED = 604;
+    public static final int COLLAPSING = 604;
     /**
      * when bottom sheet is expanded
      */
-    public static final int EXPANDED = 688;
+    public static final int EXPANDING = 688;
     /**
      * when bottom sheet is dragged by mouse
      */
@@ -68,7 +73,16 @@ public class PersistentBottomSheet extends VBox {
      * default constructor
      */
     public PersistentBottomSheet() {
+        super();
+        getStyleClass().add("persistent-bottomSheet");
+    }
 
+    /**
+     * @param nodes nodes of PersistentBottomSheet
+     */
+    public PersistentBottomSheet(Node... nodes) {
+        super(nodes);
+        getStyleClass().add("persistent-bottomSheet");
     }
 
     /**
@@ -76,57 +90,30 @@ public class PersistentBottomSheet extends VBox {
      */
     public PersistentBottomSheet(double spacing) {
         super(spacing);
+        getStyleClass().add("persistent-bottomSheet");
     }
 
     /**
-     * hide the bottom sheet with y-axis transition animation
-     * @param duration duration of hide animation
+     * @param spacing vbox spacing between nodes
+     * @param nodes nodes of PersistentBottomSheet
      */
-    public void hide(@NotNull Duration duration) {
-        var transition = new TranslateTransition(duration, this);
-        transition.setToY(getHeight());
-        transition.setOnFinished(event -> {
-            showingProperty.set(false);
-            if (callBack != null)
-                callBack.onState(this, HIDDEN);
-
-            performingShowHide = false;
-        });
-        transition.play();
-        performingShowHide = true;
+    public PersistentBottomSheet(double spacing, Node... nodes) {
+        super(spacing, nodes);
+        getStyleClass().add("persistent-bottomSheet");
     }
 
     /**
-     * hide the bottom sheet with y-axis transition animation and given duration in setDuration(Duration duration)
+     * hides the bottom sheet with y-axis transition animation
      */
     public void hide() {
-        hide(durationProperty.get());
+        setShowing(false);
     }
 
     /**
      * show the bottom sheet with y-axis transition animation
-     * @param duration duration of show animation
-     */
-    public void show(@NotNull Duration duration) {
-        var transition = new TranslateTransition(duration, this);
-        transition.setFromY(getHeight());
-        transition.setToY(0);
-        transition.setOnFinished(event -> {
-            showingProperty.set(true);
-            if (callBack != null)
-                callBack.onState(this, SHOWN);
-
-            performingShowHide = false;
-        });
-        transition.play();
-        performingShowHide = true;
-    }
-
-    /**
-     * show the bottom sheet with y-axis transition animation and given duration in setDuration(Duration duration)
      */
     public void show() {
-        show(durationProperty.get());
+        setShowing(true);
     }
 
     /**
@@ -154,64 +141,32 @@ public class PersistentBottomSheet extends VBox {
     }
 
     /**
-     * adds a stack pane as drag area and an imageview to handle drag event at the top of bottom sheet
-     * when dragHandler dragged, it resizes the bottom sheet and pass the states to callBack,
-     * the minimum resize also depends on the height of drag area and maximum resize depends on the original height of bottom sheet
+     * adds resizing support when mouse is dragged
      */
-    public void addSupportResizing() {
-        // DO NOT change min height
-        setMinHeight(USE_PREF_SIZE);
+    public void addResizingSupport() {
+        setOnMouseDragged(mouseEvent -> {
+            if (mouseEvent.getButton() != MouseButton.PRIMARY)
+                return;
 
-        var dragArea = new StackPane();
-        var dragHandler = new ImageView();
+            var newHeight = getHeight() - mouseEvent.getY();
+            if (newHeight < 0)
+                return;
+            setPrefHeight(newHeight);
 
-        dragHandler.setId("dragHandler");
-        dragHandler.setPickOnBounds(true);
-        dragHandler.setFitHeight(30);
-        dragHandler.setFitWidth(30);
-        dragHandler.imageProperty().bind(dragHandlerImageProperty);
+            if (callBack != null) {
+                // return state
+                callBack.onState(this, DRAGGED);
 
-        dragHandler.setOnMouseDragged(mouseEvent -> {
-            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                if (!firstMouseDrag) {
-                    firstMouseDrag = true;
-                    originalHeight = getHeight();
-                }
+                if (newHeight > previousHeight)
+                    callBack.onState(this, EXPANDING);
+                if (newHeight < previousHeight)
+                    callBack.onState(this, COLLAPSING);
 
-                var newHeight = getHeight() - mouseEvent.getY();
-
-                if (newHeight >= dragArea.getHeight() && newHeight <= originalHeight) {
-                    setPrefHeight(newHeight);
-
-                    if (callBack != null) {
-                        // return state
-                        callBack.onState(this, DRAGGED);
-
-                        if (newHeight == originalHeight && newHeight > previousHeight)
-                            callBack.onState(this, EXPANDED);
-                        if (newHeight == dragArea.getHeight() && newHeight < previousHeight)
-                            callBack.onState(this, COLLAPSED);
-
-                        // return slide percent
-
-                        callBack.onResized(this, (int) ((newHeight - dragArea.getHeight()) / (originalHeight - dragArea.getHeight()) * 100));
-                    }
-
-                    previousHeight = newHeight;
-                }
+                callBack.onResized(this, newHeight);
             }
+
+            previousHeight = newHeight;
         });
-
-        dragArea.getChildren().add(dragHandler);
-        getChildren().add(0, dragArea);
-    }
-
-    /**
-     * image property of dragHandler
-     * @return ObjectProperty
-     */
-    public ObjectProperty<Image> dragHandlerImageProperty() {
-        return dragHandlerImageProperty;
     }
 
     /**

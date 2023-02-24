@@ -77,7 +77,7 @@ public class FXTrayIcon extends TrayIcon {
     private void init() {
         setImageAutoSize(true);
 
-        if (menu != null && menu.getItems().size() > 0) {
+        if (menu != null && !menu.getItems().isEmpty()) {
             menu.setAutoHide(true);
 
             iconStage = new Stage();

@@ -6,9 +6,9 @@ import javafx.animation.Timeline;
 import javafx.beans.property.*;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.PopupControl;
 import javafx.scene.media.AudioClip;
-import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -22,7 +22,7 @@ import java.util.Objects;
  * @author Amir Ali
  */
 
-public class PopupNotification extends Popup {
+public class PopupNotification extends PopupControl {
 
     private NotificationPosition position = NotificationPosition.BOTTOM_RIGHT;
     private String soundPath;
@@ -41,9 +41,8 @@ public class PopupNotification extends Popup {
             currentTimeProperty.bind(timeline.currentTimeProperty());
         }
     }, currentTimeProperty = new SimpleObjectProperty<>(Duration.ZERO);
-    private final StringProperty idProperty = new SimpleStringProperty();
+    private final StringProperty notificationIdProperty = new SimpleStringProperty();
     private final EventHandler<WindowEvent> shownEvent = windowEvent -> {
-
         if (soundPath != null) {
             var player = new AudioClip(soundPath);
             player.play();
@@ -55,7 +54,7 @@ public class PopupNotification extends Popup {
             timeline.play();
 
         try {
-            NotificationInfoLogger.save(new NotificationInfo(position, getHeight(), idProperty.get()));
+            NotificationInfoLogger.save(new NotificationInfo(position, getNotificationId(), getHeight()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,7 +62,7 @@ public class PopupNotification extends Popup {
         if (timeline != null && currentTimeProperty.get().lessThan(durationProperty.get()))
             timeline.stop();
         try {
-            NotificationInfoLogger.removeIf(new NotificationInfo(position, getHeight(), idProperty.get()));
+            NotificationInfoLogger.removeIf(new NotificationInfo(position, getNotificationId(), getHeight()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,10 +71,12 @@ public class PopupNotification extends Popup {
     /**
      * initial notification
      *
-     * @param nodes content of the notification
+     * @param root root of the notification
      */
-    public PopupNotification(Node... nodes) {
-        getContent().addAll(nodes);
+    public PopupNotification(Parent root) {
+        if (root != null)
+            getScene().setRoot(root);
+        setAutoHide(true);
         addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
         addEventHandler(WindowEvent.WINDOW_HIDDEN, hiddenEvent);
     }
@@ -83,12 +84,14 @@ public class PopupNotification extends Popup {
     /**
      * initial notification
      *
-     * @param nodes content of the notification
+     * @param root root of the notification
      * @param duration display duration
      */
-    public PopupNotification(@NotNull Duration duration, Node... nodes) {
-        getContent().addAll(nodes);
-        durationProperty.set(duration);
+    public PopupNotification(@NotNull Duration duration, Parent root) {
+        if (root != null)
+            getScene().setRoot(root);
+        setDuration(duration);
+        setAutoHide(true);
         addEventHandler(WindowEvent.WINDOW_SHOWN, shownEvent);
         addEventHandler(WindowEvent.WINDOW_HIDDEN, hiddenEvent);
     }
@@ -110,11 +113,13 @@ public class PopupNotification extends Popup {
         try {
             var notificationsInfo = NotificationInfoLogger.getNotificationsInfo();
             if (!notificationsInfo.isEmpty())
-                notificationsHeight = notificationsInfo.stream().filter(action -> !action.getId().equals(idProperty.get()) && action.getPosition() == position).mapToDouble(NotificationInfo::getHeight).sum();
+                notificationsHeight = notificationsInfo.stream().filter(
+                        action -> !action.id().equals(getNotificationId()) && action.position() == getPosition()
+                ).mapToDouble(NotificationInfo::height).sum();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        var margin = marginProperty.get();
+        var margin = getMargin();
 
         return switch (position) {
             case BOTTOM_RIGHT -> new Delta(
@@ -156,6 +161,15 @@ public class PopupNotification extends Popup {
      */
     public void setPosition(@NotNull NotificationPosition position) {
         this.position = position;
+    }
+
+    /**
+     * returns current position of PopupNotification on the screen
+     *
+     * @return NotificationPosition
+     */
+    public NotificationPosition getPosition() {
+        return position;
     }
 
     /**
@@ -261,8 +275,8 @@ public class PopupNotification extends Popup {
      *
      * @param id id of the notification
      */
-    public void setId(@NotNull String id) {
-        idProperty.set(id);
+    public void setNotificationId(@NotNull String id) {
+        notificationIdProperty.set(id);
     }
 
     /**
@@ -270,8 +284,8 @@ public class PopupNotification extends Popup {
      *
      * @return String
      */
-    public String getId() {
-        return idProperty.get();
+    public String getNotificationId() {
+        return notificationIdProperty.get();
     }
 
     /**
@@ -279,7 +293,7 @@ public class PopupNotification extends Popup {
      *
      * @return StringProperty
      */
-    public StringProperty idProperty() {
-        return idProperty;
+    public StringProperty notificationIdProperty() {
+        return notificationIdProperty;
     }
 }
